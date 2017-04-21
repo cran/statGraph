@@ -1,0 +1,16 @@
+0a59e3d195ab28d7579f74a8bdee702d *DESCRIPTION
+2cf2c977698c5073d0c6dbc652e1d84c *NAMESPACE
+ceee63c336ab74a9cf986624c8ad3f20 *R/statGraph-package.R
+7a3337a6b4e398a8a44b1fbecbfec40d *R/statGraph.R
+9fac19bcc2bd549ee9c0ab5099ad1055 *inst/CITATION
+1180f1739ee8b25bbe0d3138d6191ded *man/GIC.Rd
+7c606a29905cf7d12a283e1e86f01d5e *man/anogva.Rd
+43fbdb9000a90beebb2d3c9771216663 *man/graph.acf.Rd
+348195c5ede7f98e3bf8a123d2bf9f07 *man/graph.cluster.Rd
+0c328f0ee6d35af20267205d4098bba5 *man/graph.cor.test.Rd
+496b94cb657242745bce17d25ea9cc99 *man/graph.entropy.Rd
+24e80335aafc79381f10b10765f256b1 *man/graph.model.selection.Rd
+7c18fecba4b27e2e6783c7f495f10576 *man/graph.mult.scaling.Rd
+c67ab3bd9d51369c2c2cb769898df78b *man/graph.param.estimator.Rd
+7ef633c2e5b23374ccddfcdf35603f04 *man/graph.test.Rd
+788a7401e141b32dd6f67ef34ac532f5 *man/statGraph-package.Rd

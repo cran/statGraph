@@ -1,0 +1,28 @@
+Package: statGraph
+Type: Package
+Title: Statistical Methods for Graphs
+Author: Suzana S. Santos [aut], Andre Fujita [aut, cre]
+Maintainer: Andre Fujita <fujita@ime.usp.br>
+Depends: R (>= 2.10.0), stats, graphics
+Imports: igraph, MASS
+Description: Contains statistical methods to analyze graphs, such as
+    graph parameter estimation, model selection based on the GIC
+    (Graph Information Criterion), statistical tests to
+    discriminate two or more populations of graphs (ANOGVA
+    -Analysis of Graph Variability), correlation between graphs,
+    and clustering of graphs.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyLoad: yes
+URL: https://www.ime.usp.br/~fujita/software.html
+Authors@R: c(person(given="Suzana S.", family="Santos",
+        email="suzana@ime.usp.br", role=c("aut")),
+        person(given="Andre", family="Fujita",
+        email="fujita@ime.usp.br", role=c("aut", "cre")))
+Version: 0.1.0
+Date: 2017-04-21
+RoxygenNote: 5.0.1
+NeedsCompilation: no
+Packaged: 2017-04-21 03:55:17 UTC; su
+Repository: CRAN
+Date/Publication: 2017-04-21 18:43:05 UTC
