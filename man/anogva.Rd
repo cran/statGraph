@@ -7,26 +7,27 @@
 anogva(graphs, labels, numBoot = 1000, bandwidth = "Silverman")
 }
 \arguments{
-\item{graphs}{a list of adjacency matrices. For unweighted graphs, each 
-matrix contains only 0s and 1s. For weighted graphs, each matrix may contain 
-nonnegative real values that correspond to the weights of the edges.}
+\item{graphs}{a list of adjacency (symmetric) matrices of undirected graphs.
+For unweighted graphs, each matrix contains only 0s and 1s. For weighted
+graphs, each matrix may contain real values that correspond to the weights of
+the edges.}
 
 \item{labels}{an array of integers indicating the labels of each graph.}
 
 \item{numBoot}{integer indicating the number of bootstrap resamplings.}
 
-\item{bandwidth}{string indicating which criterion will be used to choose 
-the bandwidth for the spectral density estimation. The available criteria are 
+\item{bandwidth}{string indicating which criterion will be used to choose
+the bandwidth for the spectral density estimation. The available criteria are
 "Silverman" (default) and "Sturges".}
 }
 \value{
 A list containing:
-\item{statistic}{the statistic of the test.}  
+\item{statistic}{the statistic of the test.}
 \item{p.value}{the p-value of the test.}
 }
 \description{
-'anogva' statistically tests whether two or more sets of graphs are generated 
-by the same random graph model. It is a generalization of the 'graph.test' 
+'anogva' statistically tests whether two or more sets of graphs are generated
+by the same random graph model. It is a generalization of the 'graph.test'
 function.
 }
 \examples{
@@ -48,19 +49,18 @@ result
 
 }
 \references{
-Fujita, A., Vidal, M. C. and Takahashi, D. Y. (2017) A Statistical Method to 
+Fujita, A., Vidal, M. C. and Takahashi, D. Y. (2017) A Statistical Method to
 Distinguish Functional Brain Networks. _Front. Neurosci._, *11*, 66.
 doi:10.3389/fnins.2017.00066.
 
-Takahashi, D. Y., Sato, J. R., Ferreira, C. E. and Fujita A. (2012) 
-Discriminating Different Classes of Biological Networks by Analyzing the 
-Graph Spectra  Distribution. _PLoS ONE_, *7*, e49949. 
+Takahashi, D. Y., Sato, J. R., Ferreira, C. E. and Fujita A. (2012)
+Discriminating Different Classes of Biological Networks by Analyzing the
+Graph Spectra  Distribution. _PLoS ONE_, *7*, e49949.
 doi:10.1371/journal.pone.0049949.
 
 Silverman, B. W. (1986) _Density Estimation_.  London: Chapman and Hall.
 
-Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._, 
+Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 *21*, 65-66.
 }
 \keyword{analysis_of_graph_variability}
-

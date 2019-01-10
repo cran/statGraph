@@ -7,9 +7,10 @@
 graph.acf(x, plot = TRUE)
 }
 \arguments{
-\item{x}{a list of adjacency matrices. For unweighted graphs, each matrix 
-contains only 0s and 1s. For weighted graphs, each matrix may contain 
-nonnegative real values that correspond to the weights of the edges.}
+\item{x}{a list of adjacency (symmetric) matrices of undirected graphs. For
+unweighted graphs, each matrix contains only 0s and 1s. For weighted graphs,
+each matrix may contains real values that correspond to the weights of the
+edges.}
 
 \item{plot}{logical. If TRUE (default) the graph.acf is plotted.}
 }
@@ -24,7 +25,7 @@ for graphs.
 require(igraph)
 x <- list()
 p <- array(0, 100)
-p[1:3] <- rnorm(3)  
+p[1:3] <- rnorm(3)
 for (t in 4:100) {
     p[t] <- 0.5*p[t-3] + rnorm(1)
 }
@@ -38,9 +39,8 @@ graph.acf(x, plot=TRUE)
 
 }
 \references{
-Fujita, A., Takahashi, D. Y., Balardin, J. B., Vidal, M. C. and Sato, J. R. 
-(2017) Correlation between graphs with an application to brain network 
+Fujita, A., Takahashi, D. Y., Balardin, J. B., Vidal, M. C. and Sato, J. R.
+(2017) Correlation between graphs with an application to brain network
 analysis. _Computational Statistics & Data Analysis_ *109*, 76–92.
 }
 \keyword{autocorrelation}
-

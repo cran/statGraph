@@ -4,39 +4,40 @@
 \alias{graph.mult.scaling}
 \title{Multidimensional scaling of graphs}
 \usage{
-graph.mult.scaling(x, plot = TRUE, bandwidth = "Silverman", type = "n",
-  main = "", ...)
+graph.mult.scaling(x, plot = TRUE, bandwidth = "Silverman",
+  type = "n", main = "", ...)
 }
 \arguments{
-\item{x}{a list of adjacency matrices. For unweighted graphs, each matrix 
-contains only 0s and 1s. For weighted graphs, each matrix may contain 
-nonnegative real values that correspond to the weights of the edges.}
+\item{x}{a list of adjacency (symmetric) matrices of undirected graphs. For
+unweighted graphs, each matrix contains only 0s and 1s. For weighted graphs,
+each matrix may contains real values that correspond to the weights of the
+edges.}
 
-\item{plot}{logical. If TRUE (default) the points chosen to represent the 
+\item{plot}{logical. If TRUE (default) the points chosen to represent the
 Jensen-Shannon divergence between graphs are plotted.}
 
 \item{bandwidth}{character string indicating which criterion will be used
-to choose the bandwidth for the spectral density estimation. The available 
+to choose the bandwidth for the spectral density estimation. The available
 criteria are "Silverman" (default) and "Sturges".}
 
-\item{type}{what type of plot should be drawn. The defaut value is '"n"', 
+\item{type}{what type of plot should be drawn. The defaut value is '"n"',
 which indicates that the points will not be plotted (i. e. only the labels
 of the graphs will be plotted).}
 
 \item{main}{title of the plot (default value is "").}
 
-\item{...}{additional plotting parameters. See 'plot' function from the 
+\item{...}{additional plotting parameters. See 'plot' function from the
 'graphics' package for the complete list.}
 }
 \value{
-A matrix in which each column corresponds to a coordinate and each 
-row corresponds to a graph (point). Then, each row gives the coordinates of  
+A matrix in which each column corresponds to a coordinate and each
+row corresponds to a graph (point). Then, each row gives the coordinates of
 the points chosen to represent the Jensen-Shannon divergence between graphs.
 }
 \description{
-'graph.mult.scaling' performs multidimensional scaling of graphs. It takes 
-the Jensen-Shannon divergence between graphs (JS) and uses the 'cmdscale' 
-function from the 'stats' package to obtain a set of points such that the 
+'graph.mult.scaling' performs multidimensional scaling of graphs. It takes
+the Jensen-Shannon divergence between graphs (JS) and uses the 'cmdscale'
+function from the 'stats' package to obtain a set of points such that the
 distances between the points are similar to JS.
 }
 \examples{
@@ -60,15 +61,14 @@ graph.mult.scaling(g)
 
 }
 \references{
-Takahashi, D. Y., Sato, J. R., Ferreira, C. E. and Fujita A. (2012) 
-Discriminating Different Classes of Biological Networks by Analyzing the 
-Graph Spectra  Distribution. _PLoS ONE_, *7*, e49949. 
+Takahashi, D. Y., Sato, J. R., Ferreira, C. E. and Fujita A. (2012)
+Discriminating Different Classes of Biological Networks by Analyzing the
+Graph Spectra  Distribution. _PLoS ONE_, *7*, e49949.
 doi:10.1371/journal.pone.0049949.
 
 Silverman, B. W. (1986) _Density Estimation_.  London: Chapman and Hall.
 
-Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._, 
+Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 *21*, 65-66.
 }
 \keyword{multidimensional_scaling}
-

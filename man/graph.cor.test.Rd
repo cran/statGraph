@@ -7,22 +7,23 @@
 graph.cor.test(x, y)
 }
 \arguments{
-\item{x}{a list of adjacency matrices. For unweighted graphs, each matrix 
-contains only 0s and 1s. For weighted graphs, each matrix may contain 
-nonnegative real values that correspond to the weights of the edges.}
+\item{x}{a list of adjacency (symmetric) matrices of undirected graphs.
+For unweighted graphs, each matrix contains only 0s and 1s. For weighted
+graphs, each matrix contains real values that correspond to the weights of
+the edges.}
 
-\item{y}{a list with the same length of 'x'. It is list of adjacency 
-matrices. For unweighted graphs, each matrix contains only 0s and 1s. For 
-weighted graphs, each matrix may contain nonnegative real values that 
-correspond to the weights of the edges.}
+\item{y}{a list with the same length of 'x'. It contains adjacency
+(symmetric) matrices of undirected graphs. For unweighted graphs, each matrix
+contains only 0s and 1s. For weighted graphs, each matrix may contain
+real values that correspond to the weights of the edges.}
 }
 \value{
-\item{statistic}{ the value of the test statistic.}  
+\item{statistic}{ the value of the test statistic.}
 \item{p.value}{the p-value of the test.}
 \item{estimate}{the estimated measure of association 'rho'.}
 }
 \description{
-'graph.cor.test' tests for association between paired samples of graphs, 
+'graph.cor.test' tests for association between paired samples of graphs,
 using Spearman's rho correlation coefficient.
 }
 \examples{
@@ -46,9 +47,8 @@ graph.cor.test(x, y)
 
 }
 \references{
-Fujita, A., Takahashi, D. Y., Balardin, J. B., Vidal, M. C. and Sato, J. R. 
-(2017) Correlation between graphs with an application to brain network 
+Fujita, A., Takahashi, D. Y., Balardin, J. B., Vidal, M. C. and Sato, J. R.
+(2017) Correlation between graphs with an application to brain network
 analysis. _Computational Statistics & Data Analysis_ *109*, 76–92.
 }
 \keyword{correlation_coefficient}
-

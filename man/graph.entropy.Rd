@@ -7,17 +7,17 @@
 graph.entropy(A = NULL, bandwidth = "Silverman", eigenvalues = NULL)
 }
 \arguments{
-\item{A}{the adjacency matrix of the graph. For an unweighted graph it 
-contains only 0s and 1s. For a weighted graph, it may contain nonnegative 
+\item{A}{the adjacency matrix of the graph. For an unweighted graph it
+contains only 0s and 1s. For a weighted graph, it may contain nonnegative
 real values that correspond to the weights of the edges.}
 
-\item{bandwidth}{string indicating which criterion will be used to choose 
-the bandwidth during the spectral density estimation. The available criteria 
+\item{bandwidth}{string indicating which criterion will be used to choose
+the bandwidth during the spectral density estimation. The available criteria
 are "Silverman" (default) and "Sturges".}
 
 \item{eigenvalues}{optional parameter. It contains the eigenvalues of matrix
-A. Then, if the eigenvalues of matrix A have already been computed, this 
-parameter can be used instead of A. If no value is passed, then the 
+A. Then, if the eigenvalues of matrix A have already been computed, this
+parameter can be used instead of A. If no value is passed, then the
 eigenvalues of A will be computed by 'graph.entropy'.}
 }
 \value{
@@ -35,15 +35,14 @@ entropy
 
 }
 \references{
-Takahashi, D. Y., Sato, J. R., Ferreira, C. E. and Fujita A. (2012) 
-Discriminating Different Classes of Biological Networks by Analyzing the 
-Graph Spectra  Distribution. _PLoS ONE_, *7*, e49949. 
+Takahashi, D. Y., Sato, J. R., Ferreira, C. E. and Fujita A. (2012)
+Discriminating Different Classes of Biological Networks by Analyzing the
+Graph Spectra  Distribution. _PLoS ONE_, *7*, e49949.
 doi:10.1371/journal.pone.0049949.
 
 Silverman, B. W. (1986) _Density Estimation_.  London: Chapman and Hall.
 
-Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._, 
+Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 *21*, 65-66.
 }
 \keyword{spectral_entropy}
-
