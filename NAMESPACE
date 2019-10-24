@@ -2,6 +2,8 @@
 
 export(GIC)
 export(anogva)
+export(cerqueira)
+export(fraiman)
 export(ghoshdastidar)
 export(graph.acf)
 export(graph.cluster)
