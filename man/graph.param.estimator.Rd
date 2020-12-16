@@ -100,7 +100,7 @@ the model to the observed graph according to the Graph Information Criterion
 }
 \examples{
 require(igraph)
-A <- as.matrix(get.adjacency(erdos.renyi.game(8, p=0.5)))
+A <- as.matrix(get.adjacency(erdos.renyi.game(50, p=0.5)))
 
 # Using a string to indicate the graph model
 result1 <- graph.param.estimator(A, "ER", eps=0.25)
@@ -111,18 +111,18 @@ result1
 # model <- function(n, p) {
 #    return(as.matrix(get.adjacency(erdos.renyi.game(n, p))))
 # }
-# result2 <- graph.param.estimator(A, model,  seq(0.4, 0.6, 0.1))
+# result2 <- graph.param.estimator(A, model,  seq(0.2, 0.8, 0.1))
 # result2
 }
 \references{
 Takahashi, D. Y., Sato, J. R., Ferreira, C. E. and Fujita A. (2012)
 Discriminating Different Classes of Biological Networks by Analyzing the
-Graph Spectra  Distribution. \emph{PLoS ONE}, \emph{7}, e49949.
+Graph Spectra  Distribution. _PLoS ONE_, *7*, e49949.
 doi:10.1371/journal.pone.0049949.
 
-Silverman, B. W. (1986) \emph{Density Estimation}.  London: Chapman and Hall.
+Silverman, B. W. (1986) _Density Estimation_.  London: Chapman and Hall.
 
-Sturges, H. A. The Choice of a Class Interval. \emph{J. Am. Statist. Assoc.},
-\emph{21}, 65-66.
+Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
+*21*, 65-66.
 }
 \keyword{parameter_estimation}

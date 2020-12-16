@@ -9,7 +9,7 @@ Author: Diogo R. da Costa [aut],
   Andre Fujita [aut, cre]
 Maintainer: Andre Fujita <andrefujita@usp.br>
 Depends: R (>= 3.6.0), stats, graphics
-Imports: igraph, MASS, rARPACK, cluster, foreach, snow, doSNOW
+Imports: igraph, MASS, rARPACK, cluster, foreach, parallel, doParallel
 Description: Contains statistical methods to analyze graphs, such as graph 
       parameter estimation, model selection based on the GIC (Graph Information 
       Criterion), statistical tests to discriminate two or more populations of 
@@ -37,10 +37,10 @@ Authors@R: c(
     person("Eduardo S.", "Lira", email="edulira@ime.usp.br", role=c("aut")),
     person("Andre", "Fujita", email="andrefujita@usp.br", role=c("aut", "cre"))
     )
-Version: 0.4.0
-Date: 2020-11-03
+Version: 0.4.1
+Date: 2020-12-14
 RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2020-11-19 00:16:02 UTC; grover
+Packaged: 2020-12-16 18:36:32 UTC; diogo
 Repository: CRAN
-Date/Publication: 2020-11-19 21:40:10 UTC
+Date/Publication: 2020-12-16 22:30:02 UTC
