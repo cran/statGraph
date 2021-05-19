@@ -5,7 +5,7 @@
 \title{Graph parameter estimator}
 \usage{
 graph.param.estimator(
-  A,
+  G,
   model,
   parameters = NULL,
   eps = 0.01,
@@ -16,9 +16,10 @@ graph.param.estimator(
 )
 }
 \arguments{
-\item{A}{the adjacency matrix of the graph. For an unweighted graph it
-contains only 0s and 1s. For a weighted graph, it may contain nonnegative
-real values that correspond to the weights of the edges.}
+\item{G}{the undirected graph (igraph type) or its adjacency matrix. The
+adjacency matrix of an unweighted graph contains only 0s and 1s, while the
+weighted graph may have nonnegative real values that correspond to the
+weights of the edges.}
 
 \item{model}{either a string or a function:
 
@@ -32,8 +33,7 @@ corresponds to the graph size and the second to the parameter of the model.}
 
 \item{parameters}{numeric vector containing the values that that will be
 considered for the parameter estimation. The 'graph.param.estimator' will
-return the element of 'parameter' that minimizes the Graph Information
-Criterion (GIC).
+return the element of 'parameter' that minimizes the Kullback-Leiber divergence.
 If the user does not provide the argument 'parameters', and 'model' is an
 array, then the values considered for the parameter estimation are the
 rownames converted to a numeric vector. If 'model' is a string, then
@@ -60,13 +60,16 @@ which the parameter corresponds to the scaling exponent.}
 
 \item{eps}{precision of the grid (default is 0.01) when 'classic' is TRUE.}
 
-\item{bandwidth}{string indicating which criterion will be used to choose the
-bandwidth for the spectral density estimation. The available criteria are
-"Silverman" (default) and "Sturges".}
+\item{bandwidth}{string showing which criterion is used to choose the
+bandwidth during the spectral density estimation. Choose between the
+following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+"bcv" is an abbreviation of biased cross-validation, while "ucv" means
+unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+(1991) to select the bandwidth using pilot estimation of derivatives.}
 
 \item{eigenvalues}{optional parameter. It contains the eigenvalues of matrix
-A. Then, it can be used when the eigenvalues of A were previously computed.
-If no value is passed, then the eigenvalues of A will be computed by
+G. Then, it can be used when the eigenvalues of G were previously computed.
+If no value is passed, then the eigenvalues of G will be computed by
 'graph.param.estimator'.}
 
 \item{spectra}{optional parameter containing the precomputed spectrum of the
@@ -84,12 +87,12 @@ ternary search. If TRUE parameter is estimated using grid search.}
 }
 \value{
 A list containing:
-\item{p}{the parameter estimate. For the "ER", "GRG", "KR", "WS", and "BA"
+\item{param}{the parameter estimate. For the "ER", "GRG", "KR", "WS", and "BA"
 models, the parameter corresponds to the probability to connect a pair of
 vertices, the radius used to construct the geometric graph in a unit square,
 the degree k of a regular graph, the probability to reconnect a vertex, and
 the scaling exponent, respectively.}
-\item{KL}{the Graph Information Criterion (GIC), i. e. the Kullback-Leibler
+\item{KLD}{the Kullback-Leibler
 divergence between the observed graph and the graph model with the estimated
 parameter.}
 }
@@ -99,20 +102,24 @@ the model to the observed graph according to the Graph Information Criterion
 (GIC).
 }
 \examples{
-require(igraph)
-A <- as.matrix(get.adjacency(erdos.renyi.game(50, p=0.5)))
+set.seed(1)
+G <- igraph::sample_gnp(n=50, p=0.5)
 
 # Using a string to indicate the graph model
-result1 <- graph.param.estimator(A, "ER", eps=0.25)
+result1 <- graph.param.estimator(G, "ER", eps=0.25)
 result1
 
-## Using a function to describe the graph model
-## Erdos-Renyi graph
-# model <- function(n, p) {
-#    return(as.matrix(get.adjacency(erdos.renyi.game(n, p))))
-# }
-# result2 <- graph.param.estimator(A, model,  seq(0.2, 0.8, 0.1))
-# result2
+\dontrun{
+# Using a function to describe the graph model
+# Erdos-Renyi graph
+set.seed(1)
+model <- function(n, p) {
+  return(igraph::sample_gnp(n, p))
+}
+result2 <- graph.param.estimator(G, model,  seq(0.2, 0.8, 0.1))
+result2
+}
+
 }
 \references{
 Takahashi, D. Y., Sato, J. R., Ferreira, C. E. and Fujita A. (2012)
@@ -124,5 +131,10 @@ Silverman, B. W. (1986) _Density Estimation_.  London: Chapman and Hall.
 
 Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 *21*, 65-66.
+
+Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+selection method for kernel density estimation.
+_Journal of the Royal Statistical Society series B_, 53, 683-690.
+http://www.jstor.org/stable/2345597.
 }
 \keyword{parameter_estimation}

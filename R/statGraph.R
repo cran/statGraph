@@ -2,19 +2,22 @@
 #'
 #' \code{graph.entropy} returns the spectral entropy of an undirected graph.
 #'
-#' @param A the adjacency matrix of the graph. For an unweighted graph, it
-#' contains only 0s and 1s. For a weighted graph, it may contain nonnegative
-#' real numbers that correspond to the weights of the edges.
+#' @param G the undirected graph (igraph type) or its adjacency matrix. The
+#' adjacency matrix of an unweighted graph contains only 0s and 1s, while the
+#' weighted graph may have nonnegative real values that correspond to the
+#' weights of the edges.
 #'
 #' @param bandwidth string showing which criterion is used to choose the
 #' bandwidth during the spectral density estimation. Choose between the
-#' following criteria: "Silverman" (default), "Sturges" and "bcv".
-#' "bcv" is an abbreviation of biased cross-validation.
+#' following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+#' "bcv" is an abbreviation of biased cross-validation, while "ucv" means
+#' unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+#' (1991) to select the bandwidth using pilot estimation of derivatives.
 #'
 #' @param eigenvalues optional parameter. It contains the eigenvalues of matrix
-#' A. Then, if the eigenvalues of matrix A have already been computed, this
-#' parameter can be used instead of A. If no value is passed, then the
-#' eigenvalues of A will be computed by 'graph.entropy'.
+#' G. Then, if the eigenvalues of matrix G have already been computed, this
+#' parameter can be used instead of G. If no value is passed, then the
+#' eigenvalues of G will be computed by 'graph.entropy'.
 #'
 #' @return a real number corresponding to the graph spectral entropy.
 #'
@@ -31,14 +34,24 @@
 #' Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 #' *21*, 65-66.
 #'
+#' Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+#' selection method for kernel density estimation.
+#' _Journal of the Royal Statistical Society series B_, 53, 683-690.
+#' http://www.jstor.org/stable/2345597.
+#'
 #' @examples
 #' G <- igraph::sample_gnp(n=100, p=0.5)
-#' A <- as.matrix(igraph::get.adjacency(G))
-#' entropy <- graph.entropy(A)
+#' entropy <- graph.entropy(G)
 #' entropy
 #'
 #' @export
-graph.entropy <- function(A=NULL, bandwidth="Silverman", eigenvalues=NULL) {
+graph.entropy <- function(G=NULL, bandwidth="Silverman", eigenvalues=NULL) {
+
+  if(class(G)[[1]] == "igraph"){
+    A <- as.matrix(igraph::get.adjacency(G))
+  }else{
+    A <- G
+  }
   if (is.null(eigenvalues))
     f <- spectralDensity(A, bandwidth=bandwidth)
   else
@@ -56,9 +69,10 @@ graph.entropy <- function(A=NULL, bandwidth="Silverman", eigenvalues=NULL) {
 #' \code{GIC} returns the Kullback-Leibler divergence or L2 distance between an
 #' undirected graph and a given graph model.
 #'
-#' @param A the adjacency matrix of the graph. For an unweighted graph it
-#' contains only 0s and 1s. For a weighted graph, it may contain nonnegative
-#' real values that correspond to the weights of the edges.
+#' @param G the undirected graph (igraph type) or its adjacency matrix. The
+#' adjacency matrix of an unweighted graph contains only 0s and 1s, while the
+#' weighted graph may have nonnegative real values that correspond to the
+#' weights of the edges.
 #'
 #' @param model either a list, a string, a function or a matrix describing a
 #' graph model:
@@ -106,12 +120,14 @@ graph.entropy <- function(A=NULL, bandwidth="Silverman", eigenvalues=NULL) {
 #'
 #' @param bandwidth string showing which criterion is used to choose the
 #' bandwidth during the spectral density estimation. Choose between the
-#' following criteria: "Silverman" (default), "Sturges" and "bcv".
-#' "bcv" is an abbreviation of biased cross-validation.
+#' following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+#' "bcv" is an abbreviation of biased cross-validation, while "ucv" means
+#' unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+#' (1991) to select the bandwidth using pilot estimation of derivatives.
 #'
 #' @param eigenvalues optional parameter. It contains the eigenvalues of matrix
-#' A. Then, it can be used when the eigenvalues of A were previously computed.
-#' If no value is passed, then the eigenvalues of A will be computed by 'GIC'.
+#' G. Then, it can be used when the eigenvalues of G were previously computed.
+#' If no value is passed, then the eigenvalues of G will be computed by 'GIC'.
 #'
 #' @param dist string indicating if you want to use the "KL" (default) or "L2"
 #' distances. "KL" means Kullback-Leibler divergence.
@@ -132,10 +148,17 @@ graph.entropy <- function(A=NULL, bandwidth="Silverman", eigenvalues=NULL) {
 #' Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 #' *21*, 65-66.
 #'
+#' Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+#' selection method for kernel density estimation.
+#' _Journal of the Royal Statistical Society series B_, 53, 683-690.
+#' http://www.jstor.org/stable/2345597.
+#'
 #' @examples
-#' A <- as.matrix(igraph::get.adjacency(igraph::sample_gnp(n=50, p=0.5)))
+#' set.seed(1)
+#' G <- as.matrix(igraph::get.adjacency(igraph::sample_gnp(n=50, p=0.5)))
+#'
 #' # Using a string to indicate the graph model
-#' result1 <- GIC(A, "ER", 0.5)
+#' result1 <- GIC(G, "ER", 0.5)
 #' result1
 #'
 #' # Using a function to describe the graph model
@@ -143,12 +166,17 @@ graph.entropy <- function(A=NULL, bandwidth="Silverman", eigenvalues=NULL) {
 #' model <- function(n, p) {
 #'    return(as.matrix(igraph::get.adjacency(igraph::sample_gnp(n, p))))
 #' }
-#' result2 <- GIC(A, model, 0.5)
+#' result2 <- GIC(G, model, 0.5)
 #' result2
 #' @export
-GIC <- function(A, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
+GIC <- function(G, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
                 dist = "KL") {
 
+  if(class(G)[[1]] == "igraph"){
+    A <- as.matrix(igraph::get.adjacency(G))
+  }else{
+    A <- G
+  }
   if (is.null(eigenvalues)){
     eigenvalues <- as.numeric(eigen(A, only.values = TRUE,symmetric=TRUE)$values)
     eigenvalues <- eigenvalues/sqrt(nrow(A))
@@ -174,8 +202,8 @@ GIC <- function(A, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
       }else if(model == "BA"){
         fun <- BAfun(ceiling(mean(rowSums(A))/2))
       }else{
-	    fun <- matchFunction(model)
-	  }
+	      fun <- matchFunction(model)
+	    }
     }
     f2 <- modelSpectralDensity(fun, ncol(A), p, from=min(eigenvalues),
                                to=max(eigenvalues), bandwidth=bandwidth,
@@ -200,9 +228,10 @@ GIC <- function(A, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
 #' the model to the observed graph according to the Graph Information Criterion
 #' (GIC).
 #'
-#' @param A the adjacency matrix of the graph. For an unweighted graph it
-#' contains only 0s and 1s. For a weighted graph, it may contain nonnegative
-#' real values that correspond to the weights of the edges.
+#' @param G the undirected graph (igraph type) or its adjacency matrix. The
+#' adjacency matrix of an unweighted graph contains only 0s and 1s, while the
+#' weighted graph may have nonnegative real values that correspond to the
+#' weights of the edges.
 #'
 #' @param model either a string or a function:
 #'
@@ -226,8 +255,7 @@ GIC <- function(A, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
 #'
 #' @param parameters numeric vector containing the values that that will be
 #' considered for the parameter estimation. The 'graph.param.estimator' will
-#' return the element of 'parameter' that minimizes the Graph Information
-#' Criterion (GIC).
+#' return the element of 'parameter' that minimizes the Kullback-Leiber divergence.
 #' If the user does not provide the argument 'parameters', and 'model' is an
 #' array, then the values considered for the parameter estimation are the
 #' rownames converted to a numeric vector. If 'model' is a string, then
@@ -254,25 +282,28 @@ GIC <- function(A, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
 #'
 #' @param eps precision of the grid (default is 0.01) when 'classic' is TRUE.
 #'
-#' @param bandwidth string indicating which criterion will be used to choose the
-#' bandwidth for the spectral density estimation. The available criteria are
-#' "Silverman" (default) and "Sturges".
+#' @param bandwidth string showing which criterion is used to choose the
+#' bandwidth during the spectral density estimation. Choose between the
+#' following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+#' "bcv" is an abbreviation of biased cross-validation, while "ucv" means
+#' unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+#' (1991) to select the bandwidth using pilot estimation of derivatives.
 #'
 #' @param eigenvalues optional parameter. It contains the eigenvalues of matrix
-#' A. Then, it can be used when the eigenvalues of A were previously computed.
-#' If no value is passed, then the eigenvalues of A will be computed by
+#' G. Then, it can be used when the eigenvalues of G were previously computed.
+#' If no value is passed, then the eigenvalues of G will be computed by
 #' 'graph.param.estimator'.
 #'
 #' @param classic logical. If FALSE (default) parameter is estimated using
 #' ternary search. If TRUE parameter is estimated using grid search.
 #'
 #' @return A list containing:
-#' \item{p}{the parameter estimate. For the "ER", "GRG", "KR", "WS", and "BA"
+#' \item{param}{the parameter estimate. For the "ER", "GRG", "KR", "WS", and "BA"
 #' models, the parameter corresponds to the probability to connect a pair of
 #' vertices, the radius used to construct the geometric graph in a unit square,
 #' the degree k of a regular graph, the probability to reconnect a vertex, and
 #' the scaling exponent, respectively.}
-#' \item{KL}{the Graph Information Criterion (GIC), i. e. the Kullback-Leibler
+#' \item{KLD}{the Kullback-Leibler
 #' divergence between the observed graph and the graph model with the estimated
 #' parameter.}
 #'
@@ -289,25 +320,39 @@ GIC <- function(A, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
 #' Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 #' *21*, 65-66.
 #'
+#' Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+#' selection method for kernel density estimation.
+#' _Journal of the Royal Statistical Society series B_, 53, 683-690.
+#' http://www.jstor.org/stable/2345597.
+#'
 #' @examples
-#' require(igraph)
-#' A <- as.matrix(get.adjacency(erdos.renyi.game(50, p=0.5)))
+#' set.seed(1)
+#' G <- igraph::sample_gnp(n=50, p=0.5)
 #'
 #' # Using a string to indicate the graph model
-#' result1 <- graph.param.estimator(A, "ER", eps=0.25)
+#' result1 <- graph.param.estimator(G, "ER", eps=0.25)
 #' result1
 #'
-#' ## Using a function to describe the graph model
-#' ## Erdos-Renyi graph
-#' # model <- function(n, p) {
-#' #    return(as.matrix(get.adjacency(erdos.renyi.game(n, p))))
-#' # }
-#' # result2 <- graph.param.estimator(A, model,  seq(0.2, 0.8, 0.1))
-#' # result2
+#' \dontrun{
+#' # Using a function to describe the graph model
+#' # Erdos-Renyi graph
+#' set.seed(1)
+#' model <- function(n, p) {
+#'   return(igraph::sample_gnp(n, p))
+#' }
+#' result2 <- graph.param.estimator(G, model,  seq(0.2, 0.8, 0.1))
+#' result2
+#' }
+#'
 #' @export
-graph.param.estimator <- function(A, model, parameters=NULL, eps=0.01,
+graph.param.estimator <- function(G, model, parameters=NULL, eps=0.01,
                                   bandwidth="Silverman", eigenvalues=NULL,
                                   spectra = NULL, classic = FALSE) {
+  if(class(G)[[1]] == "igraph"){
+    A <- as.matrix(igraph::get.adjacency(G))
+  }else{
+    A <- G
+  }
   n <- ncol(A)
 
   if (class(model) == "function" && is.null(parameters)) {
@@ -346,19 +391,19 @@ graph.param.estimator <- function(A, model, parameters=NULL, eps=0.01,
         pmin <- p
       }
     }
-    out <- list("p"=pmin, "GIC"=klmin)
+    out <- list("param"=pmin, "KLD"=klmin)
   }
   #if model is ER, we compute the exact parameter
   else if(model == "ER"){
     p = sum(A)/(n*(n-1))
     kl <- GIC(A, model, p, bandwidth, eigenvalues=eigenvalues)
-    out <- list("p" = p, "GIC" = kl)
+    out <- list("param" = p, "KLD" = kl)
   }
   #if model is KR, we compute the exact parameter
   else if(model == "KR"){
     p = sum(A)/(n)
     kl <- GIC(A, model, p, bandwidth, eigenvalues=eigenvalues)
-    out <- list("p" = p, "GIC" = kl)
+    out <- list("param" = p, "KLD" = kl)
   }
   else
   {
@@ -408,7 +453,7 @@ graph.param.estimator <- function(A, model, parameters=NULL, eps=0.01,
         kl_res   = klmin
       }
     }
-    out <- list("p" = pmin_res, "GIC" = kl_res)
+    out <- list("param" = pmin_res, "KLD" = kl_res)
   }
   return(out)
 }
@@ -418,9 +463,10 @@ graph.param.estimator <- function(A, model, parameters=NULL, eps=0.01,
 #' \code{graph.model.selection} selects the graph model that best approximates the
 #' observed graph according to the Graph Information Criterion (GIC).
 #'
-#' @param A the adjacency (symmetric) matrix of an undirected graph. For an
-#' unweighted graph it contains only 0s and 1s. For a weighted graph, it
-#' contains real values that correspond to the weights of the edges.
+#' @param G the undirected graph (igraph type) or its adjacency matrix. The
+#' adjacency matrix of an unweighted graph contains only 0s and 1s, while the
+#' weighted graph may have nonnegative real values that correspond to the
+#' weights of the edges.
 #'
 #' @param models either a vector of strings, a list of functions or a list of
 #' arrays describing graph models:
@@ -471,20 +517,23 @@ graph.param.estimator <- function(A, model, parameters=NULL, eps=0.01,
 #'
 #' @param eps precision of the grid (default is 0.01).
 #'
-#' @param bandwidth string indicating which criterion will be used to choose
-#' the bandwidth for the spectral density estimation. The available criteria are
-#' "Silverman" (default) and "Sturges".
+#' @param bandwidth string showing which criterion is used to choose the
+#' bandwidth during the spectral density estimation. Choose between the
+#' following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+#' "bcv" is an abbreviation of biased cross-validation, while "ucv" means
+#' unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+#' (1991) to select the bandwidth using pilot estimation of derivatives.
 #'
 #' @param eigenvalues optional parameter. It contains the eigenvalues of matrix
-#' A. Then, it can be used when the eigenvalues of A were previously computed.
-#' If no value is passed, then the eigenvalues of A will be computed by
+#' G. Then, it can be used when the eigenvalues of G were previously computed.
+#' If no value is passed, then the eigenvalues of G will be computed by
 #' 'graph.model.selection'.
 #'
 #' @return A list containing:
 #' \item{model}{the indice(s) or name(s) of the selected model(s), i. e. the
 #' model(s) that minimize(s) the Graph Information Criterion (GIC).}
 #' \item{estimates}{a matrix in which each row corresponds to a model, the
-#' column "p" corresponds to the parameter estimate, and the column "GIC"
+#' column "param" corresponds to the parameter estimate, and the column "GIC"
 #' corresponds to the Graph Information Criterion (GIC), i. e. the
 #' Kullback-Leibler divergence between the observed graph and the model.}
 #'
@@ -501,29 +550,44 @@ graph.param.estimator <- function(A, model, parameters=NULL, eps=0.01,
 #' Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 #' *21*, 65-66.
 #'
+#' Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+#' selection method for kernel density estimation.
+#' _Journal of the Royal Statistical Society series B_, 53, 683-690.
+#' http://www.jstor.org/stable/2345597.
 #'
 #' @examples
 #'
-#' require(igraph)
-#' A <- as.matrix(get.adjacency(erdos.renyi.game(30, p=0.5)))
+#' ## Example using an igraph object as input data
+#' set.seed(1)
+#' G <- igraph::sample_gnp(n=30, p=0.5)
+#'
 #' # Using strings to indicate the graph models
-#' result1 <- graph.model.selection(A, models=c("ER", "WS"), eps=0.5)
+#' result1 <- graph.model.selection(G, models=c("ER", "WS"), eps=0.5)
 #' result1
-#' # Using functions to describe the graph models
+#'
+#'
+#' ## Using functions to describe the graph models
 #' # Erdos-Renyi graph
 #' model1 <- function(n, p) {
-#'    return(as.matrix(get.adjacency(erdos.renyi.game(n, p))))
+#'   return(igraph::sample_gnp(n, p))
 #' }
-#' # Watts-Strougatz graph
+#' # Watts-Strogatz small-world graph
 #' model2 <- function(n, pr, K=8) {
-#'     return(as.matrix(get.adjacency(watts.strogatz.game(1, n, K, pr))))
+#'   return(igraph::sample_smallworld(1, n, K, pr))
 #' }
-#' parameters <- list(seq(0, 1, 0.5), seq(0, 1, 0.5))
-#' result2 <- graph.model.selection(A, list(model1, model2), parameters)
+#' parameters <- list(seq(0.01, 0.99, 0.49), seq(0.01, 0.99, 0.49))
+#' result2 <- graph.model.selection(G, list(model1, model2), parameters)
 #' result2
+#'
 #' @export
-graph.model.selection <- function(A, models=NULL, parameters=NULL, eps=0.01,
+graph.model.selection <- function(G, models=NULL, parameters=NULL, eps=0.01,
                                   bandwidth="Silverman", eigenvalues=NULL) {
+
+  if(class(G)[[1]] == "igraph"){
+    A <- as.matrix(igraph::get.adjacency(G))
+  }else{
+    A <- G
+  }
   n <- ncol(A)
   if (class(models) == "list" && is.null(parameters)) {
     stop("It is necessary to enter the parameters that will be evaluated.")
@@ -532,7 +596,7 @@ graph.model.selection <- function(A, models=NULL, parameters=NULL, eps=0.01,
     models <- c("ER", "WS", "BA")
   }
   results <- matrix(NA, length(models), 2)
-  colnames(results) <- c("p", "GIC")
+  colnames(results) <- c("param", "GIC")
   if (class(models) == "character") {
     rownames(results) <- models
   }
@@ -549,8 +613,8 @@ graph.model.selection <- function(A, models=NULL, parameters=NULL, eps=0.01,
       p <- parameters[[i]]
     r <- graph.param.estimator(A, models[[i]], p, eps, bandwidth,
                                eigenvalues=eigenvalues)
-    results[i, "p"] <- r$p
-    results[i, "GIC"] <- r$GIC
+    results[i, "param"] <- r$p
+    results[i, "GIC"] <- r$KLD
   }
   m <- which(results[, "GIC"] == min(results[, "GIC"]))
   if (!is.null(rownames(results)))
@@ -560,31 +624,36 @@ graph.model.selection <- function(A, models=NULL, parameters=NULL, eps=0.01,
 
 #' Test for the Jensen-Shannon divergence between graphs
 #'
-#' \code{graph.test} tests whether two sets of graphs were generated by the same
+#' \code{takahashi.test} tests whether two sets of graphs were generated by the same
 #' random graph model.
 #' This bootstrap test is based on the Jensen-Shannon (JS) divergence between
 #' graphs.
 #'
-#' Given two lists of graphs, 'x' and 'y', 'graph.test' tests H0: "JS divergence
-#' between 'x' and 'y' is 0" against H1: "JS divergence between 'x' and 'y' is
-#' larger than 0".
+#' Given two lists of graphs, 'G1' and 'G2', 'takahashi.test' tests H0: "JS
+#' divergence between 'G1' and 'G2' is 0" against H1: "JS divergence between
+#' 'G1' and 'G2' is larger than 0".
 #'
-#' @param x a list of adjacency (symmetric) matrices. For unweighted graphs,
-#' each matrix contains only 0s and 1s. For weighted graphs, each matrix
-#' contains real values that correspond to the weights of the edges.
+#' @param G1 a list of undirected graphs (igraph type) or their adjacency
+#' matrices. The adjacency matrix of an unweighted graph contains only 0s and
+#' 1s, while the weighted graph may have nonnegative real values that correspond
+#' to the weights of the edges.
 #'
-#' @param y a list of adjacency (symmetric) matrices. For unweighted graphs,
-#' each matrix contains only 0s and 1s. For weighted graphs, each matrix
-#' contains real values that correspond to the weights of the edges.
+#' @param G2 a list of undirected graphs (igraph type) or their adjacency
+#' matrices. The adjacency matrix of an unweighted graph contains only 0s and
+#' 1s, while the weighted graph may have nonnegative real values that correspond
+#' to the weights of the edges.
 #'
-#' @param numBoot integer indicating the number of bootstrap resamplings.
+#' @param maxBoot integer indicating the number of bootstrap resamplings.
 #'
-#' @param bandwidth string indicating which criterion will be used to choose
-#' the bandwidth for the spectral density estimation. The available criteria are
-#' "Silverman" (default) and "Sturges".
+#' @param bandwidth string showing which criterion is used to choose the
+#' bandwidth during the spectral density estimation. Choose between the
+#' following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+#' "bcv" is an abbreviation of biased cross-validation, while "ucv" means
+#' unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+#' (1991) to select the bandwidth using pilot estimation of derivatives.
 #'
 #' @return A list containing:
-#' \item{JS}{the Jensen-Shannon divergence between 'x' and 'y'.}
+#' \item{JSD}{the Jensen-Shannon divergence between 'G1' and 'G2'.}
 #' \item{p.value}{the p-value of the test.}
 #'
 #' @keywords graph_comparison
@@ -600,19 +669,35 @@ graph.model.selection <- function(A, models=NULL, parameters=NULL, eps=0.01,
 #' Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 #' *21*, 65-66.
 #'
-#' @examples
-#' library(igraph)
-#' x <- y <- list()
-#' for (i in 1:20)
-#'    x[[i]] <- as.matrix(get.adjacency(erdos.renyi.game(50, p=0.5)))
-#' for (i in 1:20)
-#'    y[[i]] <- as.matrix(get.adjacency(erdos.renyi.game(50, p=0.51)))
+#' Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+#' selection method for kernel density estimation.
+#' _Journal of the Royal Statistical Society series B_, 53, 683-690.
+#' http://www.jstor.org/stable/2345597.
 #'
-#' result <- graph.test(x, y, numBoot=100)
+#' @examples
+#' set.seed(1)
+#' G1 <- G2 <- list()
+#' for (i in 1:20) {
+#'   G1[[i]] <- igraph::sample_gnp(n=50, p=0.5)
+#' }
+#' for (i in 1:20) {
+#'   G2[[i]] <- igraph::sample_gnp(n=50, p=0.51)
+#' }
+#' result <- takahashi.test(G1, G2, maxBoot=100)
 #' result
 #'
 #' @export
-graph.test <- function(x, y, numBoot=1000, bandwidth="Silverman") {
+takahashi.test <- function(G1, G2, maxBoot=1000, bandwidth="Silverman") {
+  x <- G1
+  y <- G2
+
+  if(class(x) == "list" && class(x[[1]]) == "igraph"){
+    x <- f.transform(x)
+  }
+  if(class(y) == "list" && class(y[[1]]) == "igraph"){
+    y <- f.transform(y)
+  }
+
   adjacencyMatrices <- append(x, y)
   labels <- c(rep(0, length(x)), rep(1, length(y)))
   f <- nSpectralDensities(adjacencyMatrices, bandwidth=bandwidth)
@@ -622,38 +707,41 @@ graph.test <- function(x, y, numBoot=1000, bandwidth="Silverman") {
   y2 <- rowMeans(densities[, labels==1])
   n1 <- length(which(labels==0))
   n2 <- length(which(labels==1))
-  results <- vector(length=numBoot)
+  results <- vector(length=maxBoot)
   ngraphs <- length(adjacencyMatrices)
   result <- JS(list("x"=x, "y"=y1), list("x"=x, "y"=y2))
-  for (i in 1:numBoot) {
+  for (i in 1:maxBoot) {
     b1 <- sample(1:ngraphs, n1, replace=TRUE)
     b2 <- sample(1:ngraphs, n2, replace=TRUE)
     y1 <- rowMeans(densities[, b1])
     y2 <- rowMeans(densities[, b2])
     results[i] <- JS(list("x"=x, "y"=y1), list("x"=x, "y"=y2))
   }
-  pvalue <- (sum(results >= result))/numBoot
-  return(list("JS"=result, "p.value"=pvalue))
+  pvalue <- (sum(results >= result))/maxBoot
+  return(list("JSD"=result, "p.value"=pvalue))
 }
 
 #' ANOGVA Analysis Of Graph Variability
 #'
 #' \code{anogva} statistically tests whether two or more sets of graphs are generated
-#' by the same random graph model. It is a generalization of the 'graph.test'
+#' by the same random graph model. It is a generalization of the 'takahashi.test'
 #' function.
 #'
-#' @param graphs a list of adjacency (symmetric) matrices of undirected graphs.
-#' For unweighted graphs, each matrix contains only 0s and 1s. For weighted
-#' graphs, each matrix may contain real values that correspond to the weights of
-#' the edges.
+#' @param G a list of undirected graphs (igraph type) or their adjacency
+#' matrices. The adjacency matrix of an unweighted graph contains only 0s and
+#' 1s, while the weighted graph may have nonnegative real values that correspond
+#' to the weights of the edges.
 #'
 #' @param labels an array of integers indicating the labels of each graph.
 #'
-#' @param numBoot integer indicating the number of bootstrap resamplings.
+#' @param maxBoot integer indicating the number of bootstrap resamplings.
 #'
-#' @param bandwidth string indicating which criterion will be used to choose
-#' the bandwidth for the spectral density estimation. The available criteria are
-#' "Silverman" (default) and "Sturges".
+#' @param bandwidth string showing which criterion is used to choose the
+#' bandwidth during the spectral density estimation. Choose between the
+#' following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+#' "bcv" is an abbreviation of biased cross-validation, while "ucv" means
+#' unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+#' (1991) to select the bandwidth using pilot estimation of derivatives.
 #'
 #' @return A list containing:
 #' \item{statistic}{the statistic of the test.}
@@ -662,20 +750,16 @@ graph.test <- function(x, y, numBoot=1000, bandwidth="Silverman") {
 #' @keywords analysis_of_graph_variability
 #'
 #' @examples
-#'
-#' require(igraph)
+#' set.seed(1)
 #' g1 <- g2 <- g3 <- list()
 #' for (i in 1:20) {
-#'    G1 <- erdos.renyi.game(50, 0.50)
-#'    g1[[i]] <- get.adjacency(G1)
-#'    G2 <- erdos.renyi.game(50, 0.50)
-#'    g2[[i]] <- get.adjacency(G2)
-#'    G3 <- erdos.renyi.game(50, 0.52)
-#'    g3[[i]] <- get.adjacency(G3)
+#'   g1[[i]] <- igraph::sample_gnp(50, 0.50)
+#'   g2[[i]] <- igraph::sample_gnp(50, 0.50)
+#'   g3[[i]] <- igraph::sample_gnp(50, 0.52)
 #' }
-#' g <- c(g1, g2, g3)
+#' G <- c(g1, g2, g3)
 #' label <- c(rep(1,20),rep(2,20),rep(3,20))
-#' result <- anogva(g, label, numBoot=50)
+#' result <- anogva(G, label, maxBoot=50)
 #' result
 #'
 #' @references
@@ -693,9 +777,20 @@ graph.test <- function(x, y, numBoot=1000, bandwidth="Silverman") {
 #'
 #' Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 #' *21*, 65-66.
+#'
+#' Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+#' selection method for kernel density estimation.
+#' _Journal of the Royal Statistical Society series B_, 53, 683-690.
+#' http://www.jstor.org/stable/2345597.
+#'
 #' @export
-anogva <- function(graphs, labels, numBoot=1000, bandwidth="Silverman") {
-  f <- nSpectralDensities(graphs, bandwidth=bandwidth)
+anogva <- function(G, labels, maxBoot=1000, bandwidth="Silverman") {
+
+  if(class(G) == "list" && class(G[[1]]) == "igraph"){
+    G <- f.transform(G)
+  }
+
+  f <- nSpectralDensities(G, bandwidth=bandwidth)
   densidade <- f$densities
   x_axis <- f$x
   band <- length(x_axis)
@@ -722,9 +817,9 @@ anogva <- function(graphs, labels, numBoot=1000, bandwidth="Silverman") {
   distOrig <- distOrig / max(labels)
 
   ## Permutation test
-  distBoot <- array(0, numBoot)
+  distBoot <- array(0, maxBoot)
 
-  for (boot in 1:numBoot) {
+  for (boot in 1:maxBoot) {
     labelsB <- sample(labels, length(labels), replace=FALSE)
 
     mediaB <- matrix(0, max(labels), band)
@@ -744,7 +839,7 @@ anogva <- function(graphs, labels, numBoot=1000, bandwidth="Silverman") {
     distBoot[boot] <- distBoot[boot] / max(labels)
   }
 
-  pvalue <- length(which(distBoot >= distOrig)) / (numBoot+1)
+  pvalue <- length(which(distBoot >= distOrig)) / (maxBoot+1)
 
   return(list("statistic"=distOrig, "p.value"=pvalue))
 }
@@ -754,9 +849,9 @@ anogva <- function(graphs, labels, numBoot=1000, bandwidth="Silverman") {
 #' \code{sp.anogva} statistically tests whether two or more graphs are
 #' generated by the same model and set of parameters.
 #'
-#' @param graph a list of adjacency (symmetric) matrices of the undirected
-#' graphs to be compared. For unweighted graphs, each matrix contains only 0s
-#' and 1s. For weighted graphs, each matrix contains real values that correspond
+#' @param G a list of undirected graphs (igraph type) or their adjacency
+#' matrices. The adjacency matrix of an unweighted graph contains only 0s and
+#' 1s, while the weighted graph may have nonnegative real values that correspond
 #' to the weights of the edges.
 #'
 #' @param model A string that indicates one of the following models: "ER"
@@ -783,8 +878,15 @@ anogva <- function(graphs, labels, numBoot=1000, bandwidth="Silverman") {
 #' @param classic logical. If FALSE (default) parameter is estimated using
 #' ternary search, if TRUE parameter is estimated using grid search.
 #'
+#' @param bandwidth string showing which criterion is used to choose the
+#' bandwidth during the spectral density estimation. Choose between the
+#' following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+#' "bcv" is an abbreviation of biased cross-validation, while "ucv" means
+#' unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+#' (1991) to select the bandwidth using pilot estimation of derivatives.
+#'
 #' @return A list containing:
-#' \item{parameter}{an array containing the estimated parameters for each
+#' \item{parameters}{a vector containing the estimated parameters for each
 #' graph.}
 #' \item{F.value}{the F statistic of the test.}
 #' \item{p.value}{the p-value of the test.}
@@ -798,40 +900,50 @@ anogva <- function(graphs, labels, numBoot=1000, bandwidth="Silverman") {
 #' semi-parametric statistical test to compare complex networks, Journal of
 #' Complex Networks, cnz028, https://doi.org/10.1093/comnet/cnz028
 #'
+#' Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+#' selection method for kernel density estimation.
+#' _Journal of the Royal Statistical Society series B_, 53, 683-690.
+#' http://www.jstor.org/stable/2345597.
+#'
 #' @examples
+#' \dontrun{
+#' set.seed(42)
+#' model <- "ER"
+#' G <- list()
 #'
-#' ## Please uncomment the following lines to run an example
-#' # require(igraph)
-#' # set.seed(42)
-#' # model <- "ER"
-#' # graph <- list()
+#' # Under H0
+#' G[[1]] <- igraph::sample_gnp(50, 0.5)
+#' G[[2]] <- igraph::sample_gnp(50, 0.5)
+#' G[[3]] <- igraph::sample_gnp(50, 0.5)
+#' result1 <- sp.anogva(G, model, maxBoot = 300)
+#' result1
 #'
-#' ## Under H0
-#' # graph[[1]] <- get.adjacency(erdos.renyi.game(50, 0.5))
-#' # graph[[2]] <- get.adjacency(erdos.renyi.game(50, 0.5))
-#' # graph[[3]] <- get.adjacency(erdos.renyi.game(50, 0.5))
-#' # result <- sp.anogva(graph, model, maxBoot = 300)
-#' # result
-#'
-#' ## Under H1
-#' # graph[[1]] <- get.adjacency(erdos.renyi.game(50, 0.5))
-#' # graph[[2]] <- get.adjacency(erdos.renyi.game(50, 0.55))
-#' # graph[[3]] <- get.adjacency(erdos.renyi.game(50, 0.5))
-#' # result <- sp.anogva(graph, model, maxBoot = 300)
-#' # result
+#' # Under H1
+#' G[[1]] <- igraph::sample_gnp(50, 0.5)
+#' G[[2]] <- igraph::sample_gnp(50, 0.55)
+#' G[[3]] <- igraph::sample_gnp(50, 0.5)
+#' result2 <- sp.anogva(G, model, maxBoot = 300)
+#' result2
+#' }
 #'
 #' @export
-sp.anogva <- function(graph, model, maxBoot=500, spectra = NULL, eps = 0.01,
-                      classic = FALSE) {
+sp.anogva <- function(G, model, maxBoot=500, spectra = NULL, eps = 0.01,
+                      classic = FALSE, bandwidth = "Silverman") {
+  graph <- G
+  if(class(graph) == "list" && class(graph[[1]]) == "igraph"){
+    graph <- f.transform(graph)
+  }
   g <- length(graph)
   p.hat <- list()
   for(l in 1:g) {
     n <- as.character(ncol(graph[[l]]))
     if (class(spectra) == "list")
       p.hat[[l]] <- graph.param.estimator(graph[[l]], model, eps=eps,
+                                          bandwidth = bandwidth,
                                           spectra = spectra[[n]],
                                           classic = classic)$p
     else p.hat[[l]] <- graph.param.estimator(graph[[l]], model, eps=eps,
+                                             bandwidth = bandwidth,
                                              spectra = spectra,
                                              classic = classic)$p
   }
@@ -843,20 +955,22 @@ sp.anogva <- function(graph, model, maxBoot=500, spectra = NULL, eps = 0.01,
       if (model == "ER") {
         g.boot[[l]] <- ER(ncol(graph[[l]]), p.hat[[l]])
       }
-      if (model == "GRG") {
+      else if (model == "GRG") {
         g.boot[[l]] <- GRG(ncol(graph[[l]]), p.hat[[l]])
       }
-      if (model == "WS") {
+      else if (model == "WS") {
         g.boot[[l]] <- WS(ncol(graph[[l]]),p.hat[[l]],2)
       }
-      if (model == "BA") {
+      else if (model == "BA") {
         g.boot[[l]] <- BA(ncol(graph[[l]]), p.hat[[l]])
       }
       if(class(spectra) == "list")
         p.boot[l,boot] <- graph.param.estimator(g.boot[[l]], model, eps=eps,
+                                                bandwidth = bandwidth,
                                                 spectra = spectra[[n]],
                                                 classic = classic)$p
       else p.boot[l,boot] <- graph.param.estimator(g.boot[[l]], model, eps=eps,
+                                                   bandwidth = bandwidth,
                                                    spectra = spectra,
                                                    classic = classic)$p
     }
@@ -875,7 +989,7 @@ sp.anogva <- function(graph, model, maxBoot=500, spectra = NULL, eps = 0.01,
   F_ <- (SStr / (g-1)) / ( SSres / (g*maxBoot - g))
   p <- pf(F_, df1=(g-1), df2=(g*maxBoot - g), lower.tail=FALSE)
   res <- list()
-  res$parameter <- as.array(p.hat)
+  res$parameters <- unlist(p.hat) #as.array(p.hat)
   res$F.value <- F_
   res$p.value <- p
   return(res)
@@ -886,15 +1000,15 @@ sp.anogva <- function(graph, model, maxBoot=500, spectra = NULL, eps = 0.01,
 #' \code{graph.cor.test} tests for association between paired samples of graphs,
 #' using Spearman's rho correlation coefficient.
 #'
-#' @param x a list of adjacency (symmetric) matrices of undirected graphs.
-#' For unweighted graphs, each matrix contains only 0s and 1s. For weighted
-#' graphs, each matrix contains real values that correspond to the weights of
-#' the edges.
+#' @param G1 a list of undirected graphs (igraph type) or their adjacency
+#' matrices. The adjacency matrix of an unweighted graph contains only 0s and
+#' 1s, while the weighted graph may have nonnegative real values that correspond
+#' to the weights of the edges.
 #'
-#' @param y a list with the same length of 'x'. It contains adjacency
-#' (symmetric) matrices of undirected graphs. For unweighted graphs, each matrix
-#' contains only 0s and 1s. For weighted graphs, each matrix may contain
-#' real values that correspond to the weights of the edges.
+#' @param G2 a list of undirected graphs (igraph type) or their adjacency
+#' matrices. The adjacency matrix of an unweighted graph contains only 0s and
+#' 1s, while the weighted graph may have nonnegative real values that correspond
+#' to the weights of the edges.
 #'
 #' @return
 #' \item{statistic}{ the value of the test statistic.}
@@ -909,9 +1023,8 @@ sp.anogva <- function(graph, model, maxBoot=500, spectra = NULL, eps = 0.01,
 #' analysis. _Computational Statistics & Data Analysis_ *109*, 76-92.
 #'
 #' @examples
-#' require(igraph)
-#' x <- list()
-#' y <- list()
+#' set.seed(1)
+#' G1 <- G2 <- list()
 #'
 #' p <- MASS::mvrnorm(50, mu=c(0,0), Sigma=matrix(c(1, 0.5, 0.5, 1), 2, 2))
 #'
@@ -921,26 +1034,32 @@ sp.anogva <- function(graph, model, maxBoot=500, spectra = NULL, eps = 0.01,
 #' p[,2] <- (p[,2] - mi)/(ma - mi)
 #'
 #' for (i in 1:50) {
-#'     x[[i]] <- get.adjacency(erdos.renyi.game(50, p[i,1]))
-#'     y[[i]] <- get.adjacency(erdos.renyi.game(50, p[i,2]))
+#'   G1[[i]] <- igraph::sample_gnp(50, p[i,1])
+#'   G2[[i]] <- igraph::sample_gnp(50, p[i,2])
 #' }
-#'
-#' graph.cor.test(x, y)
+#' graph.cor.test(G1, G2)
 #'
 #' @import stats
 #' @import MASS
 #' @export
-graph.cor.test <- function(x, y) {
+graph.cor.test <- function(G1, G2) {
 
-  x.radius <- array(0, length(x))
-  y.radius <- array(0, length(y))
-
-  for (i in 1:length(x)) {
-    x.radius[i] <- eigen(x[[i]], only.values=TRUE, symmetric=TRUE)$values[1]
-    y.radius[i] <- eigen(y[[i]], only.values=TRUE, symmetric=TRUE)$values[1]
+  if(class(G1) == "list" && class(G1[[1]]) == "igraph"){
+    G1 <- f.transform(G1)
+  }
+  if(class(G2) == "list" && class(G2[[1]]) == "igraph"){
+    G2 <- f.transform(G2)
   }
 
-  return(cor.test(x.radius, y.radius, method="spearman"))
+  G1.radius <- array(0, length(G1))
+  G2.radius <- array(0, length(G2))
+
+  for (i in 1:length(G1)) {
+    G1.radius[i] <- eigen(G1[[i]], only.values=TRUE, symmetric=TRUE)$values[1]
+    G2.radius[i] <- eigen(G2[[i]], only.values=TRUE, symmetric=TRUE)$values[1]
+  }
+
+  return(cor.test(G1.radius, G2.radius, method="spearman"))
 }
 
 #' Auto Correlation Function Estimation for Graphs
@@ -948,10 +1067,10 @@ graph.cor.test <- function(x, y) {
 #' The function \code{graph.acf} computes estimates of the autocorrelation
 #' function for graphs.
 #'
-#' @param x a list of adjacency (symmetric) matrices of undirected graphs. For
-#' unweighted graphs, each matrix contains only 0s and 1s. For weighted graphs,
-#' each matrix may contains real values that correspond to the weights of the
-#' edges.
+#' @param G a list of undirected graphs (igraph type) or their adjacency
+#' matrices. The adjacency matrix of an unweighted graph contains only 0s and
+#' 1s, while the weighted graph may have nonnegative real values that correspond
+#' to the weights of the edges.
 #'
 #' @param plot logical. If TRUE (default) the graph.acf is plotted.
 #'
@@ -965,41 +1084,45 @@ graph.cor.test <- function(x, y) {
 #' analysis. _Computational Statistics & Data Analysis_ *109*, 76-92.
 #'
 #' @examples
-#' require(igraph)
-#' x <- list()
+#' set.seed(1)
+#' G <- list()
 #' p <- array(0, 100)
 #' p[1:3] <- rnorm(3)
 #' for (t in 4:100) {
-#'     p[t] <- 0.5*p[t-3] + rnorm(1)
+#'   p[t] <- 0.5*p[t-3] + rnorm(1)
 #' }
 #' ma <- max(p)
 #' mi <- min(p)
 #' p <- (p - mi)/(ma-mi)
 #' for (t in 1:100) {
-#'     x[[t]] <- get.adjacency(erdos.renyi.game(100, p[t]))
+#'   G[[t]] <- igraph::sample_gnp(100, p[t])
 #' }
-#' graph.acf(x, plot=TRUE)
+#' graph.acf(G, plot=TRUE)
 #'
 #' @import stats
 #' @export
-graph.acf <- function(x, plot=TRUE) {
-  x.radius <- array(0, length(x))
-  for (t in 1:length(x)) {
-    x.radius[t] <- eigen(x[[t]], only.values=TRUE, symmetric=TRUE)$values[1]
+graph.acf <- function(G, plot=TRUE) {
+
+  if(class(G) == "list" && class(G[[1]]) == "igraph"){
+    G <- f.transform(G)
   }
-  res <- acf(x.radius, plot=plot)
+  G.radius <- array(0, length(G))
+  for (t in 1:length(G)) {
+    G.radius[t] <- eigen(G[[t]], only.values=TRUE, symmetric=TRUE)$values[1]
+  }
+  res <- acf(G.radius, plot=plot)
   return(res)
 }
 
 #' Hierarchical cluster analysis on a list of graphs.
 #'
-#' Given a list of graphs, \code{graph.cluster} builds a hierarchy of clusters
+#' Given a list of graphs, \code{graph.hclust} builds a hierarchy of clusters
 #' according to the Jensen-Shannon divergence between graphs.
 #'
-#' @param x a list of adjacency (symmetric) matrices of undirected graphs. For
-#' unweighted graphs, each matrix contains only 0s and 1s. For weighted graphs,
-#' each matrix may contains real values that correspond to the weights of the
-#' edges.
+#' @param G a list of undirected graphs (igraph type) or their adjacency
+#' matrices. The adjacency matrix of an unweighted graph contains only 0s and
+#' 1s, while the weighted graph may have nonnegative real values that correspond
+#' to the weights of the edges.
 #'
 #' @param k the number of clusters.
 #'
@@ -1008,9 +1131,12 @@ graph.acf <- function(x, plot=TRUE) {
 #' '"complete"', '"average"' (= UPGMA), '"mcquitty"' (= WPGMA), '"median"'
 #' (= WPGMC) or '"centroid"' (= UPGMC).
 #'
-#' @param bandwidth string indicating which criterion will be used to choose
-#' the bandwidth for the spectral density estimation. The available criteria are
-#' "Silverman" (default) and "Sturges".
+#' @param bandwidth string showing which criterion is used to choose the
+#' bandwidth during the spectral density estimation. Choose between the
+#' following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+#' "bcv" is an abbreviation of biased cross-validation, while "ucv" means
+#' unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+#' (1991) to select the bandwidth using pilot estimation of derivatives.
 #'
 #' @return A list containing:
 #' \item{hclust}{an object of class *hclust* which describes the tree produced
@@ -1030,30 +1156,33 @@ graph.acf <- function(x, plot=TRUE) {
 #' Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 #' *21*, 65-66.
 #'
+#' Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+#' selection method for kernel density estimation.
+#' _Journal of the Royal Statistical Society series B_, 53, 683-690.
+#' http://www.jstor.org/stable/2345597.
+#'
 #' @examples
-#' require(igraph)
-#' g <- list()
+#' set.seed(1)
+#' G <- list()
 #' for (i in 1:5) {
-#'     g[[i]] <- as.matrix(get.adjacency(
-#'                         erdos.renyi.game(50, 0.5, type="gnp",
-#'                                          directed = FALSE)))
+#'   G[[i]] <- igraph::sample_gnp(50, 0.5)
 #' }
 #' for (i in 6:10) {
-#'     g[[i]] <- as.matrix(get.adjacency(
-#'                         watts.strogatz.game(1, 50, 8, 0.2)))
+#'   G[[i]] <- igraph::sample_smallworld(1, 50, 8, 0.2)
 #' }
 #' for (i in 11:15) {
-#'     g[[i]] <- as.matrix(get.adjacency(
-#'                         barabasi.game(50, power = 1,
-#'                                       directed = FALSE)))
+#'   G[[i]] <- igraph::sample_pa(50, power = 1, directed = FALSE)
 #' }
-#' graph.cluster(g, 3)
+#' graph.hclust(G, 3)
 #'
 #' @import stats
 #'
 #' @export
-graph.cluster <- function(x, k, method="complete", bandwidth="Silverman") {
-
+graph.hclust <- function(G, k, method="complete", bandwidth="Silverman") {
+  x <- G
+  if(class(x) == "list" && class(x[[1]]) == "igraph"){
+    x <- f.transform(x)
+  }
   f <- nSpectralDensities(x, bandwidth=bandwidth)
 
   d <- matrix(0, length(x), length(x))
@@ -1081,17 +1210,20 @@ graph.cluster <- function(x, k, method="complete", bandwidth="Silverman") {
 #' 'cmdscale' function from the 'stats' package to obtain a set of points such
 #' that the distances between the points are similar to JS.
 #'
-#' @param x a list of adjacency (symmetric) matrices of undirected graphs. For
-#' unweighted graphs, each matrix contains only 0s and 1s. For weighted graphs,
-#' each matrix may contains real values that correspond to the weights of the
-#' edges.
+#' @param G a list of undirected graphs (igraph type) or their adjacency
+#' matrices. The adjacency matrix of an unweighted graph contains only 0s and
+#' 1s, while the weighted graph may have nonnegative real values that correspond
+#' to the weights of the edges.
 #'
 #' @param plot logical. If TRUE (default) the points chosen to represent the
 #' Jensen-Shannon divergence between graphs are plotted.
 #'
-#' @param bandwidth character string indicating which criterion will be used
-#' to choose the bandwidth for the spectral density estimation. The available
-#' criteria are "Silverman" (default) and "Sturges".
+#' @param bandwidth string showing which criterion is used to choose the
+#' bandwidth during the spectral density estimation. Choose between the
+#' following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+#' "bcv" is an abbreviation of biased cross-validation, while "ucv" means
+#' unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+#' (1991) to select the bandwidth using pilot estimation of derivatives.
 #'
 #' @param type what type of plot should be drawn. The defaut value is '"n"',
 #' which indicates that the points will not be plotted (i. e. only the labels
@@ -1119,29 +1251,33 @@ graph.cluster <- function(x, k, method="complete", bandwidth="Silverman") {
 #' Sturges, H. A. The Choice of a Class Interval. _J. Am. Statist. Assoc._,
 #' *21*, 65-66.
 #'
+#' Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+#' selection method for kernel density estimation.
+#' _Journal of the Royal Statistical Society series B_, 53, 683-690.
+#' http://www.jstor.org/stable/2345597.
+#'
 #' @examples
-#' require(igraph)
-#' g <- list()
+#' set.seed(1)
+#' G <- list()
 #' for (i in 1:5) {
-#'     g[[i]] <- as.matrix(get.adjacency(
-#'                         erdos.renyi.game(50, 0.5, type="gnp",
-#'                                          directed = FALSE)))
+#'   G[[i]] <- igraph::sample_gnp(50, 0.5)
 #' }
 #' for (i in 6:10) {
-#'     g[[i]] <- as.matrix(get.adjacency(
-#'                         watts.strogatz.game(1, 50, 8, 0.2)))
+#'   G[[i]] <- igraph::sample_smallworld(1, 50, 8, 0.2)
 #' }
 #' for (i in 11:15) {
-#'     g[[i]] <- as.matrix(get.adjacency(
-#'                         barabasi.game(50, power = 1,
-#'                                       directed = FALSE)))
+#'   G[[i]] <- igraph::sample_pa(50, power = 1, directed = FALSE)
 #' }
-#' graph.mult.scaling(g)
+#' graph.mult.scaling(G)
 #'
 #' @import graphics
 #' @export
-graph.mult.scaling <- function(x, plot=TRUE, bandwidth="Silverman", type="n",
+graph.mult.scaling <- function(G, plot=TRUE, bandwidth="Silverman", type="n",
                                main="", ...) {
+  x <- G
+  if(class(x) == "list" && class(x[[1]]) == "igraph"){
+    x <- f.transform(x)
+  }
 
   f <- nSpectralDensities(x, bandwidth=bandwidth)
 
@@ -1175,7 +1311,7 @@ graph.mult.scaling <- function(x, plot=TRUE, bandwidth="Silverman", type="n",
 #' Tang hypothesis testing for random graphs.
 #'
 #' Given two independent finite-dimensional random dot product graphs,
-#' \code{tang} tests if they have generating latent positions that are drawn
+#' \code{tang.test} tests if they have generating latent positions that are drawn
 #' from the same distribution.
 #'
 #' @param G1 the first undirected graph to be compared. Must be an igraph
@@ -1189,20 +1325,12 @@ graph.mult.scaling <- function(x, plot=TRUE, bandwidth="Silverman", type="n",
 #' @param sigma a real value indicating the kernel bandwidth. If NULL (default)
 #' the bandwidth is calculated by the method.
 #'
-#' @param alpha the significance level for the test (default is 0.05).
-#'
-#' @param bootstrap_sample integer indicating the number of bootstrap resamples
+#' @param maxBoot integer indicating the number of bootstrap resamples
 #' (default is 200).
 #'
-#' @param printResult logical indicating if the test must print the result
-#' (default is FALSE).
-#'
 #' @return A list containing:
-#' \item{X1}{the embedding of G1.}
-#' \item{X2}{the embedding of G2.}
-#' \item{test_stats}{the value of the test.}
-#' \item{p_value}{the p-value of the test.}
-#' \item{bootstrap_samples}{The test distrition on the bootstrap resamples.}
+#' \item{T}{the value of the test.}
+#' \item{p.value}{the p-value of the test.}
 #'
 #' @references
 #' Tang, Minh, et al. "A nonparametric two-sample hypothesis testing problem for
@@ -1213,87 +1341,63 @@ graph.mult.scaling <- function(x, plot=TRUE, bandwidth="Silverman", type="n",
 #' (2017): 344-354.
 #'
 #' @examples
-#' require(igraph)
 #' set.seed(42)
 #'
 #' ## test under H0
 #' lpvs <- matrix(rnorm(200), 20, 10)
 #' lpvs <- apply(lpvs, 2, function(x) { return (abs(x)/sqrt(sum(x^2))) })
-#' g1 <- sample_dot_product(lpvs)
-#' g2 <- sample_dot_product(lpvs)
-#' D <- tang(g1,g2, 5, printResult = TRUE)
+#' G1 <- igraph::sample_dot_product(lpvs)
+#' G2 <- igraph::sample_dot_product(lpvs)
+#' D1 <- tang.test(G1, G2, 5)
+#' D1
 #'
 #' ## test under H1
 #' lpvs2 <- matrix(pnorm(200), 20, 10)
 #' lpvs2 <- apply(lpvs2, 2, function(x) { return (abs(x)/sqrt(sum(x^2))) })
-#' g2 <- suppressWarnings(sample_dot_product(lpvs2))
-#' D <- tang(g1,g2, 5, printResult = TRUE)
-#'
+#' G2 <- suppressWarnings(igraph::sample_dot_product(lpvs2))
+#' D2 <- tang.test(G1, G2, 5)
+#' D2
 #'
 #' @export
-tang <- function(G1, G2, dim, sigma = NULL, alpha = 0.05, bootstrap_sample=200,
-                 printResult = FALSE){
-  t.validateInput(G1, G2, dim, alpha, bootstrap_sample, printResult)
+tang.test <- function(G1, G2, dim, sigma = NULL, maxBoot=200){
+
+  t.validateInput(G1, G2, dim, maxBoot)
   Xhat1 = t.embed.graph(G1, dim)
   Xhat2 = t.embed.graph(G2, dim)
   if(is.null(sigma)){
     sigma = t.get.sigma(Xhat1, Xhat2)
   }
   test_stat = t.test.stat(Xhat1, Xhat2, sigma)
-  test_distribution = t.sampling.distribution(G1, dim, bootstrap_sample)
-  #test_distribution2 = sampling.distribution(G2, dim, bootstrap_sample)
+  test_distribution = t.sampling.distribution(G1, dim, maxBoot)
+  #test_distribution2 = sampling.distribution(G2, dim, maxBoot)
   p_val = t.p_value(test_stat, test_distribution)
-  num = round(bootstrap_sample * alpha)
-  reject_threshold = test_distribution[num]
-  reject = FALSE
-  if (p_val <= alpha) {
-    reject = TRUE
-  }
-  if (printResult) {
-    if (reject) {
-      msg <- paste("Reject the null hypothesis that two graphs are identically",
-                   "distributed.")
-      print(msg)
-    } else {
-      msg <- paste("Fail to reject the null hypothesis that two graphs are",
-                   "identically distributed.")
-      print(msg)
-    }
-  }
-  out = list(X1 = Xhat1, X2 = Xhat2, test_stats = test_stat,
-             p_value = p_val, bootstrap_samples = test_distribution)
+
+  out = list(T = test_stat, p.value = p_val)
   return(out)
 }
 
 #' Ghoshdastidar hypothesis testing for large random graphs.
 #'
 #' Given two lists of graphs generated by the inhomogeneous random graph model,
-#' \code{ghoshdastidar} tests if they were generated by the same parameters.
+#' \code{ghoshdastidar.test} tests if they were generated by the same parameters.
 #'
-#' @param x the first list of undirected graphs to be compared. Must be a list
+#' @param G1 the first list of undirected graphs to be compared. Must be a list
 #' of matrices or igraph objects.
 #'
-#' @param y the second list of undirected graphs to be compared. Must be a list
+#' @param G2 the second list of undirected graphs to be compared. Must be a list
 #' of matrices or igraph objects.
 #'
-#' @param maxPer integer indicating the number of bootstrap resamples (default
+#' @param maxBoot integer indicating the number of bootstrap resamples (default
 #' is 300).
-#'
-#' @param alpha the significance level for the test (default is 0.05).
 #'
 #' @param two.sample logical. If TRUE the sets contain only one graph each. If
 #' FALSE the sets contain more than one graph each (default is FALSE).
 #'
-#' @param printResult logical indicating if the test must print the result
-#' (default is FALSE).
-#'
 #
 #' @return A list containing:
-#' \item{test_stats}{the value of the test.}
-#' \item{p_value}{the p-value of the test (only returned when the parameter
+#' \item{T}{the value of the test.}
+#' \item{p.value}{the p-value of the test (only returned when the parameter
 #' 'two.sample' is FALSE).}
-#' \item{bootstrap_samples}{The test distrition on the bootstrap resamples (only
-#' returned when the parameter 'two.sample' is FALSE).}
 #'
 #' @references
 #' Ghoshdastidar, Debarghya, et al. "Two-sample tests for large random graphs
@@ -1304,75 +1408,63 @@ tang <- function(G1, G2, dim, sigma = NULL, alpha = 0.05, bootstrap_sample=200,
 #'
 #' @examples
 #' \dontrun{
-#' require(igraph)
 #' set.seed(42)
 #'
 #' ## test for sets with more than one graph each under H0
-#' x <- y <- list()
+#' G1 <- G2 <- list()
 #' for(i in 1:10){
-#'   x[[i]] <- as.matrix(get.adjacency(erdos.renyi.game(50,0.6)))
-#'   y[[i]] <- as.matrix(get.adjacency(erdos.renyi.game(50,0.6)))
+#'   G1[[i]] <- as.matrix(igraph::get.adjacency(igraph::sample_gnp(50,0.6)))
+#'   G2[[i]] <- as.matrix(igraph::get.adjacency(igraph::sample_gnp(50,0.6)))
 #' }
-#' D <- ghoshdastidar(x, y, printResult = TRUE)
+#' D1 <- ghoshdastidar.test(G1, G2)
+#' D1
 #'
 #' ## test for sets with more than one graph each under H1
-#' x <- y <- list()
+#' G1 <- G2 <- list()
 #' for(i in 1:10){
-#'   x[[i]] <- as.matrix(get.adjacency(erdos.renyi.game(50,0.6)))
-#'   y[[i]] <- as.matrix(get.adjacency(erdos.renyi.game(50,0.7)))
+#'   G1[[i]] <- as.matrix(igraph::get.adjacency(igraph::sample_gnp(50,0.6)))
+#'   G2[[i]] <- as.matrix(igraph::get.adjacency(igraph::sample_gnp(50,0.7)))
 #' }
-#' D <- ghoshdastidar(x, y, printResult = TRUE)
+#' D2 <- ghoshdastidar.test(G1, G2)
+#' D2
 #'
 #' ## test for sets with only one graph each under H0
-#' x <- y <- list()
-#' x[[1]] <- erdos.renyi.game(300, 0.6)
-#' y[[1]] <- erdos.renyi.game(300, 0.6)
-#' D <- ghoshdastidar(x, y, two.sample= TRUE, printResult = TRUE)
+#' G1 <- G2 <- list()
+#' G1[[1]] <- igraph::sample_gnp(300, 0.6)
+#' G2[[1]] <- igraph::sample_gnp(300, 0.6)
+#' D3 <- ghoshdastidar.test(G1, G2, two.sample= TRUE)
+#' D3
 #'
 #' ## test for sets with only one graph each under H1
-#' x <- y <- list()
-#' x[[1]] <- erdos.renyi.game(300, 0.6)
-#' y[[1]] <- erdos.renyi.game(300, 0.7)
-#' D <- ghoshdastidar(x, y, two.sample= TRUE, printResult = TRUE)
+#' G1 <- G2 <- list()
+#' G1[[1]] <- igraph::sample_gnp(300, 0.6)
+#' G2[[1]] <- igraph::sample_gnp(300, 0.7)
+#' D4 <- ghoshdastidar.test(G1, G2, two.sample= TRUE)
+#' D4
 #' }
 #'
 #' @export
-ghoshdastidar <- function(x, y, maxPer = 300, alpha = 0.05, two.sample = FALSE,
-                          printResult = FALSE)
+ghoshdastidar.test <- function(G1, G2, maxBoot = 300, two.sample = FALSE)
 {
-  if(class(x)=='list' && class(x[[1]])=='igraph'){ x <- g.transform(x) }
-  if(class(y)=='list' && class(y[[1]])=='igraph'){ y <- g.transform(y) }
-  if(class(x)=='igraph' && class(y)=='igraph'){
-    x <- g.transform(x)
-    y <- g.transform(y)
+  if(class(G1)=='list' && class(G1[[1]])=='igraph'){ G1 <- g.transform(G1) }
+  if(class(G2)=='list' && class(G2[[1]])=='igraph'){ G2 <- g.transform(G2) }
+  if(class(G1)=='igraph' && class(G2)=='igraph'){
+    G1 <- g.transform(G1)
+    G2 <- g.transform(G2)
   }
 
-  if(class(x) != 'list' || class(x[[1]]) != 'matrix') stop("x must be a list of matrices or igraph objects.")
-  if(class(y) != 'list' || class(y[[1]]) != 'matrix') stop("y must be a list of matrices or igraph objects.")
+  if(class(G1) != 'list' || class(G1[[1]]) != 'matrix') stop("G1 must be a list of matrices or igraph objects.")
+  if(class(G2) != 'list' || class(G2[[1]]) != 'matrix') stop("G2 must be a list of matrices or igraph objects.")
 
-  D <- g.test(x, y)
+  D <- g.test(G1, G2)
 
   if( !two.sample ){
-    test_distribution <- g.sampling.distribution(x,y,maxPer)
+    test_distribution <- g.sampling.distribution(G1,G2,maxBoot)
     p_val <- mean(test_distribution >= D)
-    if (printResult) {
-      if (p_val <= alpha) {
-        print("Reject the nullhypothesis that two graphs are identically distributed.")
-      } else {
-        print("Fail to reject the null hypothesis that two graphs are identically distributed.")
-      }
-    }
-    out = list(test_stats = D, p_value = p_val, bootstrap_samples = test_distribution)
+    out = list(T = D, p.value = p_val)
   }
   else{
-    if (printResult) {
-      if (D > 1) {
-        print("Reject the nullhypothesis that two graphs are identically distributed.")
-      } else {
-        print("Fail to reject the null hypothesis that two graphs are identically distributed.")
-      }
-    }
-    out = list(test_stats = D)
+    out = list(T = D)
   }
   return(out)
 }
@@ -1381,32 +1473,24 @@ ghoshdastidar <- function(x, y, maxPer = 300, alpha = 0.05, two.sample = FALSE,
 #' non-parametric test of hypotheses to verify if two samples of random graphs
 #' were originated from the same probability distribution.
 #'
-#' Given two identically independently distributed (idd) samples of graphs g and
-#' gp, the test verifies if they have the same distribution by calculating the
-#' mean distance D from g to gp. The test rejects the null hypothesis if D is
+#' Given two identically independently distributed (idd) samples of graphs G1 and
+#' G2, the test verifies if they have the same distribution by calculating the
+#' mean distance D from G1 to G2. The test rejects the null hypothesis if D is
 #' greater than the (1-alpha)-quantile of the distribution of the test under the
 #' null hypothesis.
 #'
-#' @param g the first iid sample of graphs to be compared. Must be a list of
+#' @param G1 the first iid sample of graphs to be compared. Must be a list of
 #' igraph objects.
 #'
-#' @param gp the second iid sample of graphs to be compared. Must be a list of
+#' @param G2 the second iid sample of graphs to be compared. Must be a list of
 #' igraph objects.
 #'
-#' @param maxPer integer indicating the number of bootstrap resamples (default
+#' @param maxBoot integer indicating the number of bootstrap resamples (default
 #' is 300).
 #'
-#' @param alpha the significance level for the test (default is 0.05).
-#'
-#' @param printResult logical indicating if the test must print the result
-#' (default is FALSE).
-#'
 #' @return A list containing:
-#' \item{test_stats}{the value of the test.}
-#' \item{p_value}{the p-value of the test.}
-#' \item{reject_threshold}{The 1-alpha quantile of the test distribution under
-#' the null hypothesys.}
-#' \item{bootstrap_samples}{The test distrition on the bootstrap resamples.}
+#' \item{W}{the value of the test.}
+#' \item{p.value}{the p-value of the test.}
 #'
 #' @references
 #' Andressa Cerqueira, Daniel Fraiman, Claudia D. Vargas and Florencia Leonardi.
@@ -1415,66 +1499,52 @@ ghoshdastidar <- function(x, y, maxPer = 300, alpha = 0.05, two.sample = FALSE,
 #'
 #' @examples
 #' \dontrun{
-#' require(igraph)
 #' set.seed(42)
 #'
 #' ## test under H0
-#' a <- b <- list()
+#' G1 <- G2 <- list()
 #' for(i in 1:10){
-#'   a[[i]] <- erdos.renyi.game(50,0.5)
-#'   b[[i]] <- erdos.renyi.game(50,0.5)
+#'   G1[[i]] <- igraph::sample_gnp(50,0.5)
+#'   G2[[i]] <- igraph::sample_gnp(50,0.5)
 #' }
-#' k <- cerqueira(a, b, printResult = TRUE)
+#' k1 <- cerqueira.test(G1, G2)
+#' k1
 #'
 #' ## test under H1
-#' a <- b <- list()
+#' G1 <- G2 <- list()
 #' for(i in 1:10){
-#'   a[[i]] <- erdos.renyi.game(50,0.5)
-#'   b[[i]] <- erdos.renyi.game(50,0.6)
+#'   G1[[i]] <- igraph::sample_gnp(50,0.5)
+#'   G2[[i]] <- igraph::sample_gnp(50,0.6)
 #' }
-#' k <- cerqueira(a, b, printResult = TRUE)
+#' k2 <- cerqueira.test(G1, G2)
+#' k2
 #' }
 #'
 #' @export
-cerqueira <- function(g, gp, maxPer = 300, alpha = 0.05, printResult = FALSE)
+cerqueira.test <- function(G1, G2, maxBoot = 300)
 {
 
-  if(class(g)=="list" && class(g[[1]])=="igraph"){
-    g <- c.transform(g)
+  if(class(G1)=="list" && class(G1[[1]])=="igraph"){
+    G1 <- c.transform(G1)
   }
   else{
-    stop("Parameter g must be an a list of igraph objects.")
+    stop("Parameter G1 must be a list of igraph objects.")
   }
 
-  if(class(gp)=="list" && class(gp[[1]])=="igraph"){
-    gp <- c.transform(gp)
+  if(class(G2)=="list" && class(G2[[1]])=="igraph"){
+    G2 <- c.transform(G2)
   }
   else{
-    stop("Parameter gp must be an a list of igraph objects.")
+    stop("Parameter G2 must be a list of igraph objects.")
   }
 
-  D <- c.test(g,gp)
+  D <- c.test(G1,G2)
 
-  test_distribution <- c.sampling.distribution(g,gp,maxPer)
+  test_distribution <- c.sampling.distribution(G1,G2,maxBoot)
 
   p_val <- mean(test_distribution >= D)
 
-  reject_threshold = quantile(test_distribution,1-alpha)
-
-  if (printResult) {
-    if( D > reject_threshold){
-      msg <- paste("Reject the nullhypothesis that two graphs are identically",
-                   "distributed.")
-      print(msg)
-    } else {
-      msg <- paste("Fail to reject the null hypothesis that two graphs are",
-                   "identically distributed.")
-      print(msg)
-    }
-  }
-
-  out = list(test_stats=D, p_value=p_val, reject_threshold=reject_threshold,
-             bootstrap_samples=test_distribution)
+  out = list(W=D, p.value=p_val)
 
   return(out)
 }
@@ -1484,25 +1554,18 @@ cerqueira <- function(g, gp, maxPer = 300, alpha = 0.05, printResult = FALSE)
 #' groups with an analysis of variance test (ANOVA).
 #'
 #' Given a list of graphs, the test verifies if all the subpopulations have the
-#' same mean network,
-#' under the alternative that at least one subpopulation has a different mean
-#' network.
+#' same mean network, under the alternative that at least one subpopulation has
+#' a different mean network.
 #'
-#' @param g the undirected graphs to be compared. Must be a list of lists of
+#' @param G the undirected graphs to be compared. Must be a list of lists of
 #' igraph objects or a list of lists of adjacency matrices.
 #'
-#' @param maxPer integer indicating the number of bootstrap resamples
+#' @param maxBoot integer indicating the number of bootstrap resamples
 #' (default is 300).
 #'
-#' @param alpha the significance level for the test (default is 0.05).
-#'
-#' @param printResult logical indicating if the test must print the result
-#' (default is FALSE).
-#'
 #' @return A list containing:
-#' \item{test_stats}{the value of the test.}
-#' \item{p_value}{the p-value of the test.}
-#' \item{bootstrap_samples}{The test distrition on the bootstrap resamples.}
+#' \item{T}{the value of the test.}
+#' \item{p.value}{the p-value of the test.}
 #'
 #' @references
 #' Fraiman, Daniel, and Ricardo Fraiman. "An ANOVA approach for statistical
@@ -1511,41 +1574,42 @@ cerqueira <- function(g, gp, maxPer = 300, alpha = 0.05, printResult = FALSE)
 #'
 #' @examples
 #' \dontrun{
-#' require(igraph)
 #' set.seed(42)
 #'
 #' ## test under H0
-#' a <- b <- d <- list()
+#' a <- b <- G <- list()
 #' for(i in 1:10){
-#'   a[[i]] <- erdos.renyi.game(50,0.5)
-#'   b[[i]] <- erdos.renyi.game(50,0.5)
+#'   a[[i]] <- igraph::sample_gnp(50,0.5)
+#'   b[[i]] <- igraph::sample_gnp(50,0.5)
 #' }
-#' d <- list(a,b)
-#' k <- fraiman(d, printResult = TRUE)
+#' G <- list(a,b)
+#' k1 <- fraiman.test(G)
+#' k1
 #'
 #' ## test under H1
-#' a <- b <- d <- list()
+#' a <- b <- G <- list()
 #' for(i in 1:10){
-#'   a[[i]] <- erdos.renyi.game(50,0.5)
-#'   b[[i]] <- erdos.renyi.game(50,0.6)
+#'   a[[i]] <- igraph::sample_gnp(50,0.5)
+#'   b[[i]] <- igraph::sample_gnp(50,0.6)
 #' }
-#' d <- list(a,b)
-#' k <- fraiman(d, printResult = TRUE)
+#' G <- list(a,b)
+#' k2 <- fraiman.test(G)
+#' k2
 #' }
 #'
 #' @export
-fraiman <- function(g, maxPer = 300, alpha = 0.05, printResult = FALSE){
+fraiman.test <- function(G, maxBoot = 300){
   # transform and verify input
-  if(class(g)=='list' && class(g[[1]])=='list' && class(g[[1]][[1]])=='igraph'){
-    g <- f.transform(g)
+  if(class(G)=='list' && class(G[[1]])=='list' && class(G[[1]][[1]])=='igraph'){
+    G <- f.transform(G)
   }
-  if(class(g)!='list'|| class(g[[1]])!='list' || class(g[[1]][[1]])!='matrix')
+  if(class(G)!='list'|| class(G[[1]])!='list' || class(G[[1]][[1]])!='matrix')
     stop(paste("You must pass a list of lists of igraphs or a list of lists of",
                "matrices."))
 
-  D <- f.test(g)
+  D <- f.test(G)
 
-  test_distribution <- f.sampling.distribution(g, maxPer)
+  test_distribution <- f.sampling.distribution(G, maxBoot)
 
   ## modification made in april 1st, 2019:
   p_val <- mean(test_distribution <= D)
@@ -1553,18 +1617,7 @@ fraiman <- function(g, maxPer = 300, alpha = 0.05, printResult = FALSE){
   ## original was:
   # p_val <- mean(abs(test_distribution) >= abs(D))
 
-  if (printResult) {
-    if (p_val <= alpha) {
-      print(paste("Reject the nullhypothesis that two graphs are identically",
-                  "distributed."))
-    }
-    else {
-      print(paste("Fail to reject the null hypothesis that two graphs are",
-                  "identically distributed."))
-    }
-  }
-
-  out = list(test_stats=D, p_value=p_val, bootstrap_samples=test_distribution)
+  out = list(T=D, p.value=p_val)
 
   return(out)
 }
@@ -1619,20 +1672,29 @@ kernelBandwidth <- function(x) {
 # Returns the density function for a sample x at n points in the interval [from, to]
 gaussianDensity <- function(x, from=NULL, to=NULL, bandwidth="Silverman",
                             npoints=1024) {
-  if (bandwidth == "Sturges")
+  if (bandwidth == "Sturges"){
     bw <- kernelBandwidth(x)
-  else if (bandwidth == "Silverman")
+  }else if (bandwidth == "Silverman"){
     bw <- bw.nrd0(x)
-  else if (bandwidth == "bcv")
+  }else if (bandwidth == "bcv"){
     bw <- suppressWarnings(bw.bcv(x))
-  if (bw == 0)
+  }else if (bandwidth == "ucv"){
+    bw <- suppressWarnings(bw.ucv(x))
+  }else if (bandwidth == "SJ"){
+    bw <- "SJ"
+  }else{
+    stop("Please, choose a valid bandwidth.")
+  }
+  if (bw == 0){
     return(NA)
-  if (is.null(from) || is.null(to))
+  }
+  if (is.null(from) || is.null(to)){
     f <- density(x, bw=bw, n=npoints)
-  else
+  }else{
     f <- density(x, bw=bw, from=from, to=to, n=npoints)
+  }
 
-  f$y = f$y + 1e-12 # we do not the area to be zero, so we add a very small number
+  f$y = f$y + 1e-12 # we do not want the area to be zero, so we add a very small number
   area <- trapezoidSum(f$x, f$y)
   return(list("x"=f$x, "y"=f$y/area))
 }
@@ -1737,6 +1799,9 @@ modelSpectralDensity <- function(fun, n, p, ngraphs=100, from=NULL, to=NULL,
   spectra <- matrix(NA, n, ngraphs)
   for (i in 1:ngraphs) {
     A <- fun(n, p)
+    if(class(A)[[1]] == "igraph"){
+      A <- as.matrix(igraph::get.adjacency(A))
+    }
     eigenvalues <- (as.numeric(eigen(A, only.values = TRUE,
                                      symmetric=TRUE)$values)/sqrt(nrow(A)))
     spectra[,i] <- eigenvalues
@@ -1782,12 +1847,12 @@ matchFunction <- function(name) {
 
 
 ## Auxiliary for Cerqueira method. Test distribution under the null hypothesis
-c.sampling.distribution <- function(g, gp, maxPer = 300)
+c.sampling.distribution <- function(g, gp, maxBoot = 300)
 {
 
   m <- nrow(g)+nrow(gp)
   test_distribution = c()
-  for (i_per in 1:maxPer){
+  for (i_per in 1:maxBoot){
     total <- rbind(g, gp)
     ind <- sample(1:m, floor(m/2), replace=F)
     xa <- total[ind,]
@@ -1899,7 +1964,7 @@ f.transform <- function(g)
 }
 
 ## Auxiliary for Fraiman method. Boostrap for the test.
-f.sampling.distribution <- function(g, maxPer = 300)
+f.sampling.distribution <- function(g, maxBoot = 300)
 {
 
   # creates a list with all the graphs
@@ -1910,7 +1975,7 @@ f.sampling.distribution <- function(g, maxPer = 300)
 
   dist.boot = c()
   # bootstrap
-  for (i_per in 1:maxPer){
+  for (i_per in 1:maxBoot){
     G1 <- sample(G, m, replace=F)
     #modification made on April 1s, 2019:
     if(n==2){
@@ -2041,10 +2106,9 @@ t.test.stat <- function(X, Y, sigma) {
 
 ## Auxiliary for Tang method.
 t.embed.graph <- function(g, dim) {
-  # Call ase to get latent position
-  #lpv = embed.ase(g, dim)$X
-  igraph.arpack.default$maxiter = .Machine$integer.max
-  lpv = igraph::embed_adjacency_matrix(g,dim, options = igraph.arpack.default)$X
+  defaults = igraph::arpack_defaults
+  defaults$maxiter = .Machine$integer.max
+  lpv = igraph::embed_adjacency_matrix(g,dim, options = defaults)$X
 
   # Fix signs of eigenvectors issue
   for (i in 1:dim) {
@@ -2106,7 +2170,7 @@ t.p_value <- function(ts, test_distribution) {
 }
 
 ## Auxiliary for Tang method.
-t.validateInput <- function(G1, G2, dim, alpha, bootstrap_sample, printResult) {
+t.validateInput <- function(G1, G2, dim, maxBoot) {
 
   if (class(G1) == "dgCMatrix") { G1 = igraph::graph_from_adjacency_matrix(G1) }
   if (class(G1) == "matrix") { G1 = igraph::graph_from_adjacency_matrix(G1) }
@@ -2122,25 +2186,25 @@ t.validateInput <- function(G1, G2, dim, alpha, bootstrap_sample, printResult) {
     if (dim >= igraph::gorder(G1) || dim >= igraph::gorder(G2)) { stop("Num. Embedded dimensions 'dim' is greater or equal than number of vertices.") }
   }
 
-  if (class(alpha) != "numeric") {
-    stop("Input object 'alpha' is not a numeric value.")
-  } else if (length(alpha) != 1) {
-    stop("Input object 'alpha' is not a numeric value.")
+  #if (class(alpha) != "numeric") {
+  #  stop("Input object 'alpha' is not a numeric value.")
+  #} else if (length(alpha) != 1) {
+  #  stop("Input object 'alpha' is not a numeric value.")
+  #} else {
+  #  if (alpha >= 1 || alpha <= 0) {
+  #    stop("Significance level alpha must be strictly between 0 and 1.")
+  #  }
+  #}
+  if (class(maxBoot) != "numeric") {
+    stop("Input object 'maxBoot' is not a numeric value.")
+  } else if (length(maxBoot) != 1) {
+    stop("Input object 'maxBoot' is not a numeric value.")
   } else {
-    if (alpha >= 1 || alpha <= 0) {
-      stop("Significance level alpha must be strictly between 0 and 1.")
-    }
-  }
-  if (class(bootstrap_sample) != "numeric") {
-    stop("Input object 'bootstrap_sample' is not a numeric value.")
-  } else if (length(bootstrap_sample) != 1) {
-    stop("Input object 'bootstrap_sample' is not a numeric value.")
-  } else {
-    if (bootstrap_sample <= 20) {
+    if (maxBoot <= 20) {
       stop("The size of bootstrap sample is too small. Pick a larger value.")
     }
   }
-  if (!is.logical(printResult)) { stop("Error: Input 'printResult' must be a logical.")}
+  #if (!is.logical(printResult)) { stop("Error: Input 'printResult' must be a logical.")}
 }
 
 # Auxiliary for Ghoshdastidar method. Ghoshdastidar test itself according to article.
@@ -2183,12 +2247,12 @@ g.test <- function(x, y){
 
 
 ## Auxiliary for Ghoshdastidar method. Boostrap for the test.
-g.sampling.distribution <- function(x, y, maxPer = 300)
+g.sampling.distribution <- function(x, y, maxBoot = 300)
 {
   m1 <- length(x)
   m2 <- length(y)
   test_distribution = c()
-  for (i_per in 1:maxPer){
+  for (i_per in 1:maxBoot){
     xe <- sample(append(x,y), m1, replace = TRUE)
     ye <- sample(append(x,y), m2, replace = TRUE)
     test_distribution[i_per] <- g.test(xe, ye)
@@ -2216,13 +2280,13 @@ g.transform <- function(g)
 #=========================================
 ## Clustering functions
 
-#' Clustering Expectation-Maximization for Graphs (gCEM)
+#' Clustering Expectation-Maximization for Graphs (graph.cem)
 #'
-#' \code{gCEM} clusters graphs following an expectation-maximization algorithm based
+#' \code{graph.cem} clusters graphs following an expectation-maximization algorithm based
 #' on the Kullback-Leibler divergence between the spectral densities of the
 #' graph and of the random graph model.
 #'
-#' @param g a list containing the adjacency matrix of the graphs to be
+#' @param g a list containing the graphs or their adjacency matrices to be
 #' clustered.
 #'
 #' @param  model a string that indicates one of the following random graph
@@ -2230,36 +2294,54 @@ g.transform <- function(g)
 #' (k regular graph), "WS" (Watts-Strogatz model), and "BA" (Barabasi-Albert
 #' model).
 #'
-#' @param num_clusters an integer specifying the number of clusters.
+#' @param k an integer specifying the number of clusters.
 #'
 #' @param max_iter the maximum number of expectation-maximization steps to execute.
 #'
 #' @param ncores the number of cores to be used for the parallel processing. The
 #' default value is 1.
 #'
-#' @return a list containing three fields:
-#' labels a vector of the same lenght of g containing the clusterization labels;
-#' p a vector of length equals to num_clusters;
+#' @param bandwidth string showing which criterion is used to choose the
+#' bandwidth during the spectral density estimation. Choose between the
+#' following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
+#' "bcv" is an abbreviation of biased cross-validation, while "ucv" means
+#' unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+#' (1991) to select the bandwidth using pilot estimation of derivatives.
 #'
-#' @keywords gCEM
+#' @return a list containing three fields:
+#' labels a vector of the same length of g containing the clusterization labels;
+#' a vector containing the estimated parameters for the groups. It has the
+#' length equals to \code{k};
+#'
+#' @keywords graph.cem
 #'
 #' @references
 #' Celeux, Gilles, and Gerard Govaert. "Gaussian parsimonious clustering
 #' models." Pattern recognition 28.5 (1995): 781-793.
 #'
+#' Sheather, S. J. and Jones, M. C. (1991). A reliable data-based bandwidth
+#' selection method for kernel density estimation.
+#' _Journal of the Royal Statistical Society series B_, 53, 683-690.
+#' http://www.jstor.org/stable/2345597.
+#'
 #' @examples
-#' require(igraph)
+#'  set.seed(42)
 #'  g <- list()
 #'  for(i in 1:2){
-#'    g[[i]] <- igraph::get.adjacency(igraph::sample_gnp(n=10, p=0.5))
+#'    g[[i]] <- igraph::sample_gnp(n=10, p=0.5)
 #'  }
 #'  for(i in 3:4){
-#'    g[[i]] <- igraph::get.adjacency(igraph::sample_gnp(n=10, p=1))
+#'    g[[i]] <- igraph::sample_gnp(n=10, p=1)
 #'  }
-#'  res <- gCEM(g, model="ER", num_clusters=2, max_iter=1, ncores=1)
+#'  res <- graph.cem(g, model="ER", k=2, max_iter=1, ncores=1)
+#'  res
 #' @export
-gCEM <- function(g, model, num_clusters, max_iter = 10, ncores=1){
+graph.cem <- function(g, model, k, max_iter = 10, ncores=1,
+                      bandwidth="Sturges"){
 
+  if(class(g) == "list" && class(g[[1]]) == "igraph"){
+    g <- f.transform(g)
+  }
   `%dopar%` <- foreach::`%dopar%`
   `%:%` <- foreach::`%:%`
 
@@ -2269,8 +2351,8 @@ gCEM <- function(g, model, num_clusters, max_iter = 10, ncores=1){
   doParallel::registerDoParallel(cl)
 
   tipo <- model
-  tau <- matrix(0, nrow = num_clusters, ncol = length(g))
-  kl <- matrix(0, nrow = num_clusters, ncol = length(g))
+  tau <- matrix(0, nrow = k, ncol = length(g))
+  kl <- matrix(0, nrow = k, ncol = length(g))
 
   prevlik <- 0
   lik <- 1
@@ -2279,7 +2361,7 @@ gCEM <- function(g, model, num_clusters, max_iter = 10, ncores=1){
   vertices <- nrow(g[[1]])
   labels <- array(0, length(g))
   g_GIC <- array(0, length(g))
-  p <- array(0, num_clusters)
+  p <- array(0, k)
 
   ## Range that the parameters will be estimated
   if (tipo == "ER") {
@@ -2300,29 +2382,29 @@ gCEM <- function(g, model, num_clusters, max_iter = 10, ncores=1){
 
   ## Pre-processing of the graph spectra
   eigenvalues <- list()
-  j = 1 # adicionado por Grover
+  j = 1 # added by Grover
   eigenvalues <- foreach::foreach(j = 1:length(g)) %dopar% {
     as.numeric(eigen(g[[j]], only.values = TRUE,
                      symmetric=TRUE)$values)/sqrt(vertices)
   }
 
   p_graph <- array(0, length(g))
-  # Adicionado pelo Grover
+  # Added by Grover
   list_functions = c("GIC","matchFunction","ER","KR","WS","BA","GRG","WSfun","BAfun","modelSpectralDensity","nDensities","gaussianDensity","kernelBandwidth","trapezoidSum","KL","distance")
   ## Parameter estimation
   ret <- foreach::foreach(i = 1:length(g),.export = c("graph.param.estimator",list_functions)) %dopar% {
-    graph.param.estimator(g[[i]], model=tipo, parameters=parameters, bandwidth="Sturges", eigenvalues=eigenvalues[[i]], eps=0.01)
+    graph.param.estimator(g[[i]], model=tipo, parameters=parameters, bandwidth=bandwidth, eigenvalues=eigenvalues[[i]], eps=0.01)
   }
   #
   for(i in 1:length(g)){
     p_graph[i] <- ret[[i]]$p
-    g_GIC[i] <- ret[[i]]$GIC
+    g_GIC[i] <- ret[[i]]$KLD
   }
 
   #Initialize cluster parameters
   p_uniq <- unique(p_graph)
-  for(i in 1:num_clusters){
-    p[i] <- quantile(p_uniq, i/(num_clusters+1))
+  for(i in 1:k){
+    p[i] <- quantile(p_uniq, i/(k+1))
     #the KR parameter needs to be even
     if(tipo == "KR") p[i] <- round(p[i])
   }
@@ -2330,8 +2412,8 @@ gCEM <- function(g, model, num_clusters, max_iter = 10, ncores=1){
   convergiu <- 0
   count <- 0
   while(!convergiu){
-    kl <- foreach::foreach(i = 1:num_clusters, .combine=cbind,.export = list_functions) %:% foreach::foreach(j = 1:length(g), .combine=c,.export = list_functions) %dopar% {
-      GIC(g[[j]], tipo, p[i], bandwidth = "Sturges", eigenvalues = eigenvalues[[j]], dist="KL" )
+    kl <- foreach::foreach(i = 1:k, .combine=cbind,.export = list_functions) %:% foreach::foreach(j = 1:length(g), .combine=c,.export = list_functions) %dopar% {
+      GIC(g[[j]], tipo, p[i], bandwidth = bandwidth, eigenvalues = eigenvalues[[j]], dist="KL" )
     }
     kl <- t(kl)
     kl[which(kl == Inf)] <- max(kl[which(kl < Inf)])
@@ -2345,12 +2427,12 @@ gCEM <- function(g, model, num_clusters, max_iter = 10, ncores=1){
       labels[i] <- which(tau[,i] == max(tau[,i]))
     }
     #Check if there is an empty group
-    for(i in 1:num_clusters){
+    for(i in 1:k){
       if(length(which(labels == i))==0) labels[which(tau[i,] == max(tau[i,]))] <- i
     }
 
-    #estima o p dos modelos para maximizar o tae
-    for(i in 1:num_clusters){
+    # Estimates the value of p for the models to maximize tae
+    for(i in 1:k){
       p[i] <- sum(p_graph[which(labels==i)])/length(which(labels==i))
       if(tipo == "KR") p[i] <- round(p[i])
     }
@@ -2365,7 +2447,7 @@ gCEM <- function(g, model, num_clusters, max_iter = 10, ncores=1){
     if((prevlik!=0 && prevlik/lik > 0.99 && prevlik/lik < 1.01) ) convergiu <- 1
     prevlabels <- labels
   }
-  ret <- list(labels, p)
+  ret <- list("cluster"=labels, "parameters"=p)
   # close cluster
   parallel::stopCluster(cl)
 
@@ -2377,10 +2459,10 @@ gCEM <- function(g, model, num_clusters, max_iter = 10, ncores=1){
 
 #' K-means for Graphs
 #'
-#' \code{kmeans.graph} clusters graphs following a k-means algorithm based on the
+#' \code{graph.kmeans} clusters graphs following a k-means algorithm based on the
 #' Jensen-Shannon divergence between the spectral densities of the graphs.
 #'
-#' @param x a list containing the adjacency matrix of the graphs to be
+#' @param x a list containing the graphs or their adjacency matrices to be
 #' clustered.
 #'
 #' @param k an integer specifying the number of clusters.
@@ -2388,7 +2470,7 @@ gCEM <- function(g, model, num_clusters, max_iter = 10, ncores=1){
 #' @param nstart the number of trials of k-means clusterizations. The algorithm
 #' returns the clusterization with the best silhouette.
 #'
-#' @return a vector of the same lenght of g containing the clusterization
+#' @return a vector of the same length of x containing the clusterization
 #' labels.
 #'
 #' @keywords k-means
@@ -2402,18 +2484,23 @@ gCEM <- function(g, model, num_clusters, max_iter = 10, ncores=1){
 #' information theory 28.2 (1982): 129-137.
 #'
 #' @examples
-#' require(igraph)
+#' set.seed(42)
 #' g <- list()
 #' for(i in 1:5){
-#'   g[[i]] <- get.adjacency(sample_gnp(30, p=0.2))
+#'   g[[i]] <- igraph::sample_gnp(30, p=0.2)
 #' }
 #' for(i in 6:10){
-#'   g[[i]] <- get.adjacency(sample_gnp(30, p=0.5))
+#'   g[[i]] <- igraph::sample_gnp(30, p=0.5)
 #' }
-#' res <- kmeans.graph(g, k=2, nstart=2)
+#' res <- graph.kmeans(g, k=2, nstart=2)
+#' res
 #'
 #' @export
-kmeans.graph <- function(x, k, nstart=2) {
+graph.kmeans <- function(x, k, nstart=2) {
+
+  if(class(x) == "list" && class(x[[1]]) == "igraph"){
+    x <- f.transform(x)
+  }
   sil <- -1
   num.graphs <- length(x)
   tmp <- spectral_density(x)
@@ -2570,10 +2657,13 @@ SturgesBandwidth <- function(x) {
 #' Physical Review E, 99(4), 042309.
 #'
 #' @examples
+#' set.seed(42)
 #' G <- igraph::sample_smallworld(dim = 1, size = 10, nei = 2, p = 0.2)
+#'
 #' # Obtain the degree distribution
 #' deg_prob <- c(igraph::degree_distribution(graph = G, mode = "all"),0.0)
 #' k_deg <- seq(1,length(deg_prob)) - 1
+#'
 #' # Obtain the excess degree distribution
 #' c <- sum(k_deg * deg_prob)
 #' q_prob <- c()
@@ -2581,11 +2671,13 @@ SturgesBandwidth <- function(x) {
 #'   aux_q <- (k + 1) * deg_prob[k + 1]/c
 #'   q_prob <- c(q_prob,aux_q)
 #' }
+#'
 #' # Obtain the sorted unique degrees greater than 1
 #' all_k <- c(1:length(q_prob))
 #' valid_idx <- q_prob != 0
 #' q_prob <- q_prob[valid_idx]
 #' all_k <- all_k[valid_idx]
+#'
 #' # Obtain the probability of the eigenvalue 0
 #' z <- 0 + 0.01*1i
 #' eigenval_prob <- -Im(fast.eigenvalue.probability(deg_prob,q_prob,all_k,z))
@@ -2624,7 +2716,7 @@ fast.eigenvalue.probability <- function(deg_prob,q_prob,all_k,z,n_iter = 5000){
 #' \code{fast.spectral.density} returns the degree-based spectral density in
 #' the interval <\code{from},\code{to}> by using npoints discretization points.
 #'
-#' @param graph The undirected unweighted graph (igraph type) whose spectral
+#' @param G The undirected unweighted graph (igraph type) whose spectral
 #' density we want to obtain.
 #'
 #' @param from Lower end of the interval that contain the eigenvalues or
@@ -2650,14 +2742,17 @@ fast.eigenvalue.probability <- function(deg_prob,q_prob,all_k,z,n_iter = 5000){
 #' Physical Review E, 99(4), 042309.
 #'
 #' @examples
+#' set.seed(42)
 #' G <- igraph::sample_smallworld(dim = 1, size = 100, nei = 2, p = 0.2)
+#'
 #' # Obtain the degree-based spectral density
-#' density <- fast.spectral.density(graph = G, npoints = 80, numCores = 1)
+#' density <- fast.spectral.density(G = G, npoints = 80, numCores = 1)
 #' density
 #'
 #' @export
-fast.spectral.density <- function(graph, from = NULL, to = NULL, npoints = 2000,
+fast.spectral.density <- function(G, from = NULL, to = NULL, npoints = 2000,
                                   numCores = 1){
+  graph <- G
   `%dopar%` <- foreach::`%dopar%`
   # Number of vertices
   n <- igraph::vcount(graph)
@@ -2705,8 +2800,10 @@ fast.spectral.density <- function(graph, from = NULL, to = NULL, npoints = 2000,
     z <- x[i] + 0.01*1i
     -Im(fast.eigenvalue.probability(deg_prob,q_prob,all_k,z))
   }
+
   # close cluster
   parallel::stopCluster(cl)
+
   # Returns density function
   return (list("x" = x,"y" = y))
 }
@@ -2716,7 +2813,7 @@ fast.spectral.density <- function(graph, from = NULL, to = NULL, npoints = 2000,
 #' \code{fast.graph.param.estimator} estimates the parameter of the complex
 #' network model using the degree-based spectral density and ternary search.
 #'
-#' @param graph The undirected unweighted graph (igraph type).
+#' @param G The undirected unweighted graph (igraph type).
 #'
 #' @param model Either a string or a function:
 #'
@@ -2759,35 +2856,44 @@ fast.spectral.density <- function(graph, from = NULL, to = NULL, npoints = 2000,
 #' pair of vertices, the radius used to construct the geometric graph in a unit
 #' square, the probability to reconnect a vertex, and the scaling exponent
 #' respectively.}
-#' \item{dist}{The L1 distance between the observed graph and the graph model
+#' \item{L1_dist}{The L1 distance between the observed graph and the graph model
 #' with the estimated value.}
 #'
 #' @keywords degree_based_parameter_estimation
 #'
 #' @examples
+#' set.seed(42)
+#'
 #' ### Example giving only the name of the model to use
 #' G <- igraph::sample_smallworld(dim = 1, size = 15, nei = 2, p = 0.2)
+#'
 #' # Obtain the parameter of the WS model
-#' estimated.parameter <- fast.graph.param.estimator(G, "WS",lo = 0,hi = 0.5,eps = 1e-1, npoints = 10,
+#' estimated.parameter1 <- fast.graph.param.estimator(G, "WS", lo = 0.1, hi = 0.5,
+#'                                                   eps = 1e-1, npoints = 10,
 #'                                                   numCores = 1)
-#' estimated.parameter
-#' ### Example giving a function instead of a model (uncomment to execute)
+#' estimated.parameter1
+#'
+#' \dontrun{
+#' ### Example giving a function instead of a model
+#'
 #' # Defining the model to use
-#' #G <- igraph::sample_smallworld(dim = 1, size = 5000, nei = 2, p = 0.2)
-#' #K <- as.integer(igraph::ecount(G)/igraph::vcount(G))
-#' #fun_WS <- function(n, param, nei = K){
-#' # return (igraph::sample_smallworld(dim = 1,size = n, nei = nei,p = param))
-#' #}
+#' G <- igraph::sample_smallworld(dim = 1, size = 5000, nei = 2, p = 0.2)
+#' K <- as.integer(igraph::ecount(G)/igraph::vcount(G))
+#' fun_WS <- function(n, param, nei = K){
+#'  return (igraph::sample_smallworld(dim = 1,size = n, nei = nei, p = param))
+#' }
+#'
 #' # Obtain the parameter of the WS model
-#' #estimated.parameter <- fast.graph.param.estimator(G, fun_WS, lo = 0.0, hi = 1.0,
-#' #                                                   npoints = 100, numCores = 2)
-#' #estimated.parameter
+#' estimated.parameter2 <- fast.graph.param.estimator(G, fun_WS, lo = 0.0, hi = 1.0,
+#'                                                    npoints = 100, numCores = 2)
+#' estimated.parameter2
+#' }
 #'
 #' @export
-fast.graph.param.estimator <- function(graph, model, lo = NULL, hi = NULL,
+fast.graph.param.estimator <- function(G, model, lo = NULL, hi = NULL,
                                        eps = 1e-3, from = NULL, to = NULL,
                                        npoints = 2000, numCores = 1){
-
+  graph <- G
   # When the model is a function then check if the smallest and largest values
   # that the parameter can take was also provided
   if(class(model) == "function" && (is.null(lo) || is.null(hi))){
@@ -2887,5 +2993,9 @@ fast.graph.param.estimator <- function(graph, model, lo = NULL, hi = NULL,
   param = (lo + hi)/2
   dist  = (dist_to_1 + dist_to_2)/2
 
-  return (list("param" = param,"dist" = dist))
+  return (list("param" = param,"L1_dist" = dist))
 }
+
+
+
+

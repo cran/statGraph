@@ -37,10 +37,10 @@ Authors@R: c(
     person("Eduardo S.", "Lira", email="edulira@ime.usp.br", role=c("aut")),
     person("Andre", "Fujita", email="andrefujita@usp.br", role=c("aut", "cre"))
     )
-Version: 0.4.1
-Date: 2020-12-14
+Version: 0.5.0
+Date: 2021-05-18
 RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2020-12-16 18:36:32 UTC; diogo
+Packaged: 2021-05-18 18:42:58 UTC; diogo
 Repository: CRAN
-Date/Publication: 2020-12-16 22:30:02 UTC
+Date/Publication: 2021-05-19 07:00:06 UTC
