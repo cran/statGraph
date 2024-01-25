@@ -98,6 +98,7 @@ model <- function(n, p) {
 }
 result2 <- GIC(G, model, 0.5)
 result2
+
 }
 \references{
 Takahashi, D. Y., Sato, J. R., Ferreira, C. E. and Fujita A. (2012)

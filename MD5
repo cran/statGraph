@@ -1,9 +1,9 @@
-91f5bfd5f52a254a8868f3c0c7bf4281 *DESCRIPTION
-79fcb52d617b8753a7286fc2a18a82d6 *NAMESPACE
+d4f41625449a52a31ceda66941f03a4d *DESCRIPTION
+905d431cdc5b1949cfeaec5edc5f56f7 *NAMESPACE
 1c04b5dc8c7ba465ff2df97676cc445d *R/statGraph-package.R
-d4cc20859540db7c502a9efe3578c059 *R/statGraph.R
-3459831902b77b9b7c999b7e663556b3 *build/partial.rdb
-1406446026d52ca95332d06288ab1bcb *man/GIC.Rd
+20f2392a91fb9a243944f25f441c1409 *R/statGraph.R
+07ac5d9790b35e6801046490f471be79 *build/partial.rdb
+1bde48ff4a8253fbe3b31209d69e06c3 *man/GIC.Rd
 fa79e75612ebdc4d6a64dfd9df27ccfa *man/anogva.Rd
 399c134455dab4fa1f375a2051ab5e3a *man/cerqueira.test.Rd
 124ceeb3b59363772bf0f25e0358c1a9 *man/fast.eigenvalue.probability.Rd

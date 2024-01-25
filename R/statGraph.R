@@ -44,10 +44,11 @@
 #' entropy <- graph.entropy(G)
 #' entropy
 #'
+#' @import methods
 #' @export
 graph.entropy <- function(G=NULL, bandwidth="Silverman", eigenvalues=NULL) {
 
-  if(class(G)[[1]] == "igraph"){
+  if(is(G,"igraph")){
     A <- as.matrix(igraph::get.adjacency(G))
   }else{
     A <- G
@@ -168,11 +169,13 @@ graph.entropy <- function(G=NULL, bandwidth="Silverman", eigenvalues=NULL) {
 #' }
 #' result2 <- GIC(G, model, 0.5)
 #' result2
+#' 
+#' @import methods
 #' @export
 GIC <- function(G, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
                 dist = "KL") {
 
-  if(class(G)[[1]] == "igraph"){
+  if(is(G,"igraph")){
     A <- as.matrix(igraph::get.adjacency(G))
   }else{
     A <- G
@@ -181,11 +184,11 @@ GIC <- function(G, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
     eigenvalues <- as.numeric(eigen(A, only.values = TRUE,symmetric=TRUE)$values)
     eigenvalues <- eigenvalues/sqrt(nrow(A))
   }
-  if (class(model) == "list") {
+  if (is(model,"list")) {
     f2 <- model
     f1 <- gaussianDensity(eigenvalues, from=min(f2$x), to=max(f2$x),
                           bandwidth=bandwidth, npoints=1024)
-  }else if (class(model) == "matrix") {
+  } else if (is(model,"matrix")) {
     f2 <- nDensities(model, from=min(eigenvalues),
                      to=max(eigenvalues), bandwidth=bandwidth,
                      npoints=1024)
@@ -196,7 +199,7 @@ GIC <- function(G, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
                           bandwidth=bandwidth, npoints=1024)
   }else {
     fun <- model
-    if (class(model) == "character") {
+    if (is(model,"character")) {
       if (model == "WS"){
         fun <- WSfun(as.integer(sum(A)/(2*ncol(A))))
       }else if(model == "BA"){
@@ -333,7 +336,7 @@ GIC <- function(G, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
 #' result1 <- graph.param.estimator(G, "ER", eps=0.25)
 #' result1
 #'
-#' \dontrun{
+#' \donttest{
 #' # Using a function to describe the graph model
 #' # Erdos-Renyi graph
 #' set.seed(1)
@@ -344,22 +347,23 @@ GIC <- function(G, model, p=NULL, bandwidth="Silverman", eigenvalues=NULL,
 #' result2
 #' }
 #'
+#' @import methods
 #' @export
 graph.param.estimator <- function(G, model, parameters=NULL, eps=0.01,
                                   bandwidth="Silverman", eigenvalues=NULL,
                                   spectra = NULL, classic = FALSE) {
-  if(class(G)[[1]] == "igraph"){
+  if(is(G,"igraph")){
     A <- as.matrix(igraph::get.adjacency(G))
   }else{
     A <- G
   }
   n <- ncol(A)
 
-  if (class(model) == "function" && is.null(parameters)) {
+  if (is(model,"function") && is.null(parameters)) {
     stop("It is necessary to enter the parameters that will be evaluated.")
   }
 
-  if(class(model) == "function" && classic == FALSE){
+  if(is(model,"function") && classic == FALSE){
     warning("The ternary search only works for 'model' = \"ER\",\"GRG\",\"KR\",\"BA\" or \"WS\".\nChanging for classic = TRUE.")
     classic = TRUE
   }
@@ -565,7 +569,7 @@ graph.param.estimator <- function(G, model, parameters=NULL, eps=0.01,
 #' result1 <- graph.model.selection(G, models=c("ER", "WS"), eps=0.5)
 #' result1
 #'
-#'
+#' \donttest{
 #' ## Using functions to describe the graph models
 #' # Erdos-Renyi graph
 #' model1 <- function(n, p) {
@@ -578,18 +582,19 @@ graph.param.estimator <- function(G, model, parameters=NULL, eps=0.01,
 #' parameters <- list(seq(0.01, 0.99, 0.49), seq(0.01, 0.99, 0.49))
 #' result2 <- graph.model.selection(G, list(model1, model2), parameters)
 #' result2
-#'
+#' }
+#' @import methods
 #' @export
 graph.model.selection <- function(G, models=NULL, parameters=NULL, eps=0.01,
                                   bandwidth="Silverman", eigenvalues=NULL) {
 
-  if(class(G)[[1]] == "igraph"){
+  if(is(G,"igraph")){
     A <- as.matrix(igraph::get.adjacency(G))
   }else{
     A <- G
   }
   n <- ncol(A)
-  if (class(models) == "list" && is.null(parameters)) {
+  if (is(models,"list") && is.null(parameters)) {
     stop("It is necessary to enter the parameters that will be evaluated.")
   }
   if (is.null(models)) {
@@ -597,10 +602,10 @@ graph.model.selection <- function(G, models=NULL, parameters=NULL, eps=0.01,
   }
   results <- matrix(NA, length(models), 2)
   colnames(results) <- c("param", "GIC")
-  if (class(models) == "character") {
+  if (is(models,"character")) {
     rownames(results) <- models
   }
-  if (class(models) == "list") {
+  if (is(models,"list")) {
     if (!is.null(names(parameters)))
       rownames(results) <- names(parameters)
   }
@@ -686,15 +691,16 @@ graph.model.selection <- function(G, models=NULL, parameters=NULL, eps=0.01,
 #' result <- takahashi.test(G1, G2, maxBoot=100)
 #' result
 #'
+#' @import methods
 #' @export
 takahashi.test <- function(G1, G2, maxBoot=1000, bandwidth="Silverman") {
   x <- G1
   y <- G2
 
-  if(class(x) == "list" && class(x[[1]]) == "igraph"){
+  if(is(x,"list") && is(x[[1]],"igraph")){
     x <- f.transform(x)
   }
-  if(class(y) == "list" && class(y[[1]]) == "igraph"){
+  if(is(y,"list") && is(y[[1]],"igraph")){
     y <- f.transform(y)
   }
 
@@ -783,10 +789,11 @@ takahashi.test <- function(G1, G2, maxBoot=1000, bandwidth="Silverman") {
 #' _Journal of the Royal Statistical Society series B_, 53, 683-690.
 #' http://www.jstor.org/stable/2345597.
 #'
+#' @import methods
 #' @export
 anogva <- function(G, labels, maxBoot=1000, bandwidth="Silverman") {
 
-  if(class(G) == "list" && class(G[[1]]) == "igraph"){
+  if(is(G,"list") && is(G[[1]],"igraph")){
     G <- f.transform(G)
   }
 
@@ -906,7 +913,7 @@ anogva <- function(G, labels, maxBoot=1000, bandwidth="Silverman") {
 #' http://www.jstor.org/stable/2345597.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' set.seed(42)
 #' model <- "ER"
 #' G <- list()
@@ -926,18 +933,19 @@ anogva <- function(G, labels, maxBoot=1000, bandwidth="Silverman") {
 #' result2
 #' }
 #'
+#' @import methods
 #' @export
 sp.anogva <- function(G, model, maxBoot=500, spectra = NULL, eps = 0.01,
                       classic = FALSE, bandwidth = "Silverman") {
   graph <- G
-  if(class(graph) == "list" && class(graph[[1]]) == "igraph"){
+  if(is(graph,"list") && is(graph[[1]],"igraph")){
     graph <- f.transform(graph)
   }
   g <- length(graph)
   p.hat <- list()
   for(l in 1:g) {
     n <- as.character(ncol(graph[[l]]))
-    if (class(spectra) == "list")
+    if (is(spectra,"list"))
       p.hat[[l]] <- graph.param.estimator(graph[[l]], model, eps=eps,
                                           bandwidth = bandwidth,
                                           spectra = spectra[[n]],
@@ -964,7 +972,7 @@ sp.anogva <- function(G, model, maxBoot=500, spectra = NULL, eps = 0.01,
       else if (model == "BA") {
         g.boot[[l]] <- BA(ncol(graph[[l]]), p.hat[[l]])
       }
-      if(class(spectra) == "list")
+      if(is(spectra,"list"))
         p.boot[l,boot] <- graph.param.estimator(g.boot[[l]], model, eps=eps,
                                                 bandwidth = bandwidth,
                                                 spectra = spectra[[n]],
@@ -1040,14 +1048,15 @@ sp.anogva <- function(G, model, maxBoot=500, spectra = NULL, eps = 0.01,
 #' graph.cor.test(G1, G2)
 #'
 #' @import stats
+#' @import methods
 #' @import MASS
 #' @export
 graph.cor.test <- function(G1, G2) {
 
-  if(class(G1) == "list" && class(G1[[1]]) == "igraph"){
+  if(is(G1,"list") && is(G1[[1]],"igraph")){
     G1 <- f.transform(G1)
   }
-  if(class(G2) == "list" && class(G2[[1]]) == "igraph"){
+  if(is(G2,"list") && is(G2[[1]],"igraph")){
     G2 <- f.transform(G2)
   }
 
@@ -1100,10 +1109,11 @@ graph.cor.test <- function(G1, G2) {
 #' graph.acf(G, plot=TRUE)
 #'
 #' @import stats
+#' @import methods
 #' @export
 graph.acf <- function(G, plot=TRUE) {
 
-  if(class(G) == "list" && class(G[[1]]) == "igraph"){
+  if(is(G,"list") && is(G[[1]],"igraph")){
     G <- f.transform(G)
   }
   G.radius <- array(0, length(G))
@@ -1176,11 +1186,11 @@ graph.acf <- function(G, plot=TRUE) {
 #' graph.hclust(G, 3)
 #'
 #' @import stats
-#'
+#' @import methods
 #' @export
 graph.hclust <- function(G, k, method="complete", bandwidth="Silverman") {
   x <- G
-  if(class(x) == "list" && class(x[[1]]) == "igraph"){
+  if(is(x,"list") && is(x[[1]],"igraph")){
     x <- f.transform(x)
   }
   f <- nSpectralDensities(x, bandwidth=bandwidth)
@@ -1271,11 +1281,12 @@ graph.hclust <- function(G, k, method="complete", bandwidth="Silverman") {
 #' graph.mult.scaling(G)
 #'
 #' @import graphics
+#' @import methods
 #' @export
 graph.mult.scaling <- function(G, plot=TRUE, bandwidth="Silverman", type="n",
                                main="", ...) {
   x <- G
-  if(class(x) == "list" && class(x[[1]]) == "igraph"){
+  if(is(x,"list") && is(x[[1]],"igraph")){
     x <- f.transform(x)
   }
 
@@ -1358,19 +1369,20 @@ graph.mult.scaling <- function(G, plot=TRUE, bandwidth="Silverman", type="n",
 #' D2 <- tang.test(G1, G2, 5)
 #' D2
 #'
+#' @import methods
 #' @export
 tang.test <- function(G1, G2, dim, sigma = NULL, maxBoot=200){
 
-  t.validateInput(G1, G2, dim, maxBoot)
-  Xhat1 = t.embed.graph(G1, dim)
-  Xhat2 = t.embed.graph(G2, dim)
+  t_validateInput(G1, G2, dim, maxBoot)
+  Xhat1 = t_embed_graph(G1, dim)
+  Xhat2 = t_embed_graph(G2, dim)
   if(is.null(sigma)){
-    sigma = t.get.sigma(Xhat1, Xhat2)
+    sigma = t_get_sigma(Xhat1, Xhat2)
   }
-  test_stat = t.test.stat(Xhat1, Xhat2, sigma)
-  test_distribution = t.sampling.distribution(G1, dim, maxBoot)
+  test_stat = t_test_stat(Xhat1, Xhat2, sigma)
+  test_distribution = t_sampling_distribution(G1, dim, maxBoot)
   #test_distribution2 = sampling.distribution(G2, dim, maxBoot)
-  p_val = t.p_value(test_stat, test_distribution)
+  p_val = t_p_value(test_stat, test_distribution)
 
   out = list(T = test_stat, p.value = p_val)
   return(out)
@@ -1407,7 +1419,7 @@ tang.test <- function(G1, G2, dim, sigma = NULL, maxBoot=200){
 #' inhomogeneous random graphs". arXiv preprint, arXiv:1707.00833 (2017).
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' set.seed(42)
 #'
 #' ## test for sets with more than one graph each under H0
@@ -1443,23 +1455,24 @@ tang.test <- function(G1, G2, dim, sigma = NULL, maxBoot=200){
 #' D4
 #' }
 #'
+#' @import methods
 #' @export
 ghoshdastidar.test <- function(G1, G2, maxBoot = 300, two.sample = FALSE)
 {
-  if(class(G1)=='list' && class(G1[[1]])=='igraph'){ G1 <- g.transform(G1) }
-  if(class(G2)=='list' && class(G2[[1]])=='igraph'){ G2 <- g.transform(G2) }
-  if(class(G1)=='igraph' && class(G2)=='igraph'){
-    G1 <- g.transform(G1)
-    G2 <- g.transform(G2)
+  if(is(G1,'list') && is(G1[[1]],'igraph')){ G1 <- g_transform(G1) }
+  if(is(G2,'list') && is(G2[[1]],'igraph')){ G2 <- g_transform(G2) }
+  if(is(G1,'igraph') && is(G2,'igraph')){
+    G1 <- g_transform(G1)
+    G2 <- g_transform(G2)
   }
 
-  if(class(G1) != 'list' || class(G1[[1]]) != 'matrix') stop("G1 must be a list of matrices or igraph objects.")
-  if(class(G2) != 'list' || class(G2[[1]]) != 'matrix') stop("G2 must be a list of matrices or igraph objects.")
+  if(!is(G1,'list') || !is(G1[[1]],'matrix')) stop("G1 must be a list of matrices or igraph objects.")
+  if(!is(G2,'list') || !is(G2[[1]],'matrix')) stop("G2 must be a list of matrices or igraph objects.")
 
-  D <- g.test(G1, G2)
+  D <- g_test(G1, G2)
 
   if( !two.sample ){
-    test_distribution <- g.sampling.distribution(G1,G2,maxBoot)
+    test_distribution <- g_sampling_distribution(G1,G2,maxBoot)
     p_val <- mean(test_distribution >= D)
     out = list(T = D, p.value = p_val)
   }
@@ -1498,7 +1511,7 @@ ghoshdastidar.test <- function(G1, G2, maxBoot = 300, two.sample = FALSE)
 #' https://ieeexplore.ieee.org/document/7862892
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' set.seed(42)
 #'
 #' ## test under H0
@@ -1520,27 +1533,28 @@ ghoshdastidar.test <- function(G1, G2, maxBoot = 300, two.sample = FALSE)
 #' k2
 #' }
 #'
+#' @import methods
 #' @export
 cerqueira.test <- function(G1, G2, maxBoot = 300)
 {
 
-  if(class(G1)=="list" && class(G1[[1]])=="igraph"){
-    G1 <- c.transform(G1)
+  if(is(G1,"list") && is(G1[[1]],"igraph")){
+    G1 <- c_transform(G1)
   }
   else{
     stop("Parameter G1 must be a list of igraph objects.")
   }
 
-  if(class(G2)=="list" && class(G2[[1]])=="igraph"){
-    G2 <- c.transform(G2)
+  if(is(G2,"list") && is(G2[[1]],"igraph")){
+    G2 <- c_transform(G2)
   }
   else{
     stop("Parameter G2 must be a list of igraph objects.")
   }
 
-  D <- c.test(G1,G2)
+  D <- c_test(G1,G2)
 
-  test_distribution <- c.sampling.distribution(G1,G2,maxBoot)
+  test_distribution <- c_sampling_distribution(G1,G2,maxBoot)
 
   p_val <- mean(test_distribution >= D)
 
@@ -1573,7 +1587,7 @@ cerqueira.test <- function(G1, G2, maxBoot = 300)
 #' https://www.nature.com/articles/s41598-018-23152-5
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' set.seed(42)
 #'
 #' ## test under H0
@@ -1597,13 +1611,14 @@ cerqueira.test <- function(G1, G2, maxBoot = 300)
 #' k2
 #' }
 #'
+#' @import methods
 #' @export
 fraiman.test <- function(G, maxBoot = 300){
   # transform and verify input
-  if(class(G)=='list' && class(G[[1]])=='list' && class(G[[1]][[1]])=='igraph'){
+  if(is(G,'list') && is(G[[1]],'list') && is(G[[1]][[1]],'igraph')){
     G <- f.transform(G)
   }
-  if(class(G)!='list'|| class(G[[1]])!='list' || class(G[[1]][[1]])!='matrix')
+  if(!is(G,'list') || !is(G[[1]],'list') || !is(G[[1]][[1]],'matrix'))
     stop(paste("You must pass a list of lists of igraphs or a list of lists of",
                "matrices."))
 
@@ -1799,7 +1814,7 @@ modelSpectralDensity <- function(fun, n, p, ngraphs=100, from=NULL, to=NULL,
   spectra <- matrix(NA, n, ngraphs)
   for (i in 1:ngraphs) {
     A <- fun(n, p)
-    if(class(A)[[1]] == "igraph"){
+    if(is(A,"igraph")){
       A <- as.matrix(igraph::get.adjacency(A))
     }
     eigenvalues <- (as.numeric(eigen(A, only.values = TRUE,
@@ -1847,7 +1862,7 @@ matchFunction <- function(name) {
 
 
 ## Auxiliary for Cerqueira method. Test distribution under the null hypothesis
-c.sampling.distribution <- function(g, gp, maxBoot = 300)
+c_sampling_distribution <- function(g, gp, maxBoot = 300)
 {
 
   m <- nrow(g)+nrow(gp)
@@ -1857,13 +1872,13 @@ c.sampling.distribution <- function(g, gp, maxBoot = 300)
     ind <- sample(1:m, floor(m/2), replace=F)
     xa <- total[ind,]
     ya <- total[-ind,]
-    test_distribution[i_per] <- c.test(xa,ya)
+    test_distribution[i_per] <- c_test(xa,ya)
   }
   return(sort(test_distribution))
 }
 
 ## Auxiliary for Cerqueira method. Fix input format.
-c.transform <- function(g, n = igraph::gorder(g[[1]]))
+c_transform <- function(g, n = igraph::gorder(g[[1]]))
 {
   x <- matrix(0, length(g), n*(n-1)/2)
   i <- 1
@@ -1876,7 +1891,7 @@ c.transform <- function(g, n = igraph::gorder(g[[1]]))
 }
 
 ## Auxiliary for Cerqueira method. The test itself.
-c.test <- function(g, gp)
+c_test <- function(g, gp)
 {
   wstat <- sum(abs(colMeans(g)-colMeans(gp)))
   return(wstat)
@@ -1952,12 +1967,12 @@ f.calcM <- function(x){ mapply(f.div, mapply(f.add, x, SIMPLIFY = F), SIMPLIFY =
 ## Auxiliary for Fraiman method. Padronize input.
 f.transform <- function(g)
 {
-  if(class(g)=='igraph'){ return(as.matrix(igraph::get.adjacency(g))) }
-  else if(class(g)=='list' && class(g[[1]])=='igraph'){
+  if(is(g,'igraph')){ return(as.matrix(igraph::get.adjacency(g))) }
+  else if(is(g,'list') && is(g[[1]],'igraph')){
     d <- lapply(g, f.transform)
     return(d)
   }
-  else if(class(g)=='list' && class(g[[1]])=='list'){
+  else if(is(g,'list') && is(g[[1]],'list')){
     d <- lapply(g, f.transform)
     return(d)
   }
@@ -2094,21 +2109,21 @@ distance <- function(f1,f2){
 }
 
 ## Auxiliary for Tang method.
-t.test.stat <- function(X, Y, sigma) {
+t_test_stat <- function(X, Y, sigma) {
   n <- nrow(X)
   m <- nrow(Y)
   tmpXX <- sum(exp(-(as.matrix(stats::dist(X))^2)/(2*sigma^2)))
   tmpYY <- sum(exp(-(as.matrix(stats::dist(Y))^2)/(2*sigma^2)))
-  tmpXY <- sum(exp(-(t.rect.dist(X,Y))/(2*sigma^2)))
+  tmpXY <- sum(exp(-(t_rect_dist(X,Y))/(2*sigma^2)))
   tmp <- tmpXX/(n*(n-1)) + tmpYY/(m*(m-1)) - 2*tmpXY/(m*n)
   return((m+n)*tmp)
 }
 
 ## Auxiliary for Tang method.
-t.embed.graph <- function(g, dim) {
-  defaults = igraph::arpack_defaults
-  defaults$maxiter = .Machine$integer.max
-  lpv = igraph::embed_adjacency_matrix(g,dim, options = defaults)$X
+t_embed_graph<- function(g, dim) {
+  default_options = igraph::arpack_defaults()
+  default_options$maxiter = .Machine$integer.max
+  lpv = igraph::embed_adjacency_matrix(g,dim, options = default_options)$X
 
   # Fix signs of eigenvectors issue
   for (i in 1:dim) {
@@ -2120,7 +2135,7 @@ t.embed.graph <- function(g, dim) {
 }
 
 ## Auxiliary for Tang method.
-t.rect.dist <- function(X,Y) {
+t_rect_dist<- function(X,Y) {
   X <- as.matrix(X)
   Y <- as.matrix(Y)
   n <- nrow(X)
@@ -2134,7 +2149,7 @@ t.rect.dist <- function(X,Y) {
 }
 
 ## Auxiliary for Tang method.
-t.get.sigma <- function(X1, X2) {
+t_get_sigma <- function(X1, X2) {
   v1 = as.vector(stats::dist(X1))
   v2 = as.vector(stats::dist(X2))
   v = base::append(v1, v2)
@@ -2143,8 +2158,8 @@ t.get.sigma <- function(X1, X2) {
 }
 
 ## Auxiliary for Tang method.
-t.sampling.distribution <- function(G1, dim, bootstrap_sample_size) {
-  Xhat1 = t.embed.graph(G1,dim)
+t_sampling_distribution<- function(G1, dim, bootstrap_sample_size) {
+  Xhat1 = t_embed_graph(G1,dim)
   P = t(Xhat1)
   test_distribution = c()
   i = 1
@@ -2152,10 +2167,10 @@ t.sampling.distribution <- function(G1, dim, bootstrap_sample_size) {
     tryCatch({
       G_a = suppressWarnings(igraph::sample_dot_product(P))
       G_b = suppressWarnings(igraph::sample_dot_product(P))
-      Xhat_a = suppressWarnings(t.embed.graph(G_a, dim))
-      Xhat_b = suppressWarnings(t.embed.graph(G_b, dim))
-      sigma = t.get.sigma(Xhat_a, Xhat_b)
-      ts = t.test.stat(Xhat_a, Xhat_b, sigma)
+      Xhat_a = suppressWarnings(t_embed_graph(G_a, dim))
+      Xhat_b = suppressWarnings(t_embed_graph(G_b, dim))
+      sigma = t_get_sigma(Xhat_a, Xhat_b)
+      ts = t_test_stat(Xhat_a, Xhat_b, sigma)
       test_distribution[i] = ts
       i = i + 1
     }, error=function(e) {stop(print(e))})
@@ -2164,22 +2179,22 @@ t.sampling.distribution <- function(G1, dim, bootstrap_sample_size) {
 }
 
 ## Auxiliary for Tang method.
-t.p_value <- function(ts, test_distribution) {
+t_p_value <- function(ts, test_distribution) {
   area = sum(test_distribution >= ts) / length(test_distribution)
   return(area)
 }
 
 ## Auxiliary for Tang method.
-t.validateInput <- function(G1, G2, dim, maxBoot) {
+t_validateInput <- function(G1, G2, dim, maxBoot) {
 
-  if (class(G1) == "dgCMatrix") { G1 = igraph::graph_from_adjacency_matrix(G1) }
-  if (class(G1) == "matrix") { G1 = igraph::graph_from_adjacency_matrix(G1) }
-  if (class(G1) != 'igraph') { stop("Input object 'G1' is not an igraph object.") }
-  if (class(G2) == "dgCMatrix") { G2 = igraph::graph_from_adjacency_matrix(G2) }
-  if (class(G2) == "matrix") { G2 = igraph::graph_from_adjacency_matrix(G2) }
-  if (class(G2) != 'igraph') { stop("Input object 'G2' is not an igraph object.") }
+  if (is(G1,"dgCMatrix")) { G1 = igraph::graph_from_adjacency_matrix(G1) }
+  if (is(G1,"matrix")) { G1 = igraph::graph_from_adjacency_matrix(G1) }
+  if (!is(G1,'igraph')) { stop("Input object 'G1' is not an igraph object.") }
+  if (is(G2,"dgCMatrix")) { G2 = igraph::graph_from_adjacency_matrix(G2) }
+  if (is(G2,"matrix")) { G2 = igraph::graph_from_adjacency_matrix(G2) }
+  if (!is(G2,'igraph')) { stop("Input object 'G2' is not an igraph object.") }
   if (!is.null(dim)) {
-    if (class(dim) != "numeric" && !is.integer(dim)) { stop("Input 'dim' is not a number.") }
+    if (!is(dim,"numeric") && !is.integer(dim)) { stop("Input 'dim' is not a number.") }
     if (dim%%1 != 0) { stop("Input 'dim' must be an integer.") }
     if (length(dim) > 1) { stop("Input 'dim' has length > 1.") }
     if (dim < 1) { stop("Number of dimensions 'dim' is less than 1.") }
@@ -2195,7 +2210,7 @@ t.validateInput <- function(G1, G2, dim, maxBoot) {
   #    stop("Significance level alpha must be strictly between 0 and 1.")
   #  }
   #}
-  if (class(maxBoot) != "numeric") {
+  if (!is(maxBoot,"numeric")) {
     stop("Input object 'maxBoot' is not a numeric value.")
   } else if (length(maxBoot) != 1) {
     stop("Input object 'maxBoot' is not a numeric value.")
@@ -2208,7 +2223,7 @@ t.validateInput <- function(G1, G2, dim, maxBoot) {
 }
 
 # Auxiliary for Ghoshdastidar method. Ghoshdastidar test itself according to article.
-g.test <- function(x, y){
+g_test <- function(x, y){
   m <- min(length(x),length(y))
 
   x <- lapply(x, function(s){
@@ -2247,7 +2262,7 @@ g.test <- function(x, y){
 
 
 ## Auxiliary for Ghoshdastidar method. Boostrap for the test.
-g.sampling.distribution <- function(x, y, maxBoot = 300)
+g_sampling_distribution <- function(x, y, maxBoot = 300)
 {
   m1 <- length(x)
   m2 <- length(y)
@@ -2255,15 +2270,15 @@ g.sampling.distribution <- function(x, y, maxBoot = 300)
   for (i_per in 1:maxBoot){
     xe <- sample(append(x,y), m1, replace = TRUE)
     ye <- sample(append(x,y), m2, replace = TRUE)
-    test_distribution[i_per] <- g.test(xe, ye)
+    test_distribution[i_per] <- g_test(xe, ye)
   }
   return(sort(test_distribution))
 }
 
 ## Auxiliary for Ghoshdastidar method. Padronize input.
-g.transform <- function(g)
+g_transform <- function(g)
 {
-  if(class(g)=='igraph'){
+  if(is(g,'igraph')){
     return(list(as.matrix(igraph::get.adjacency(g))))
   }
   else{
@@ -2339,7 +2354,7 @@ g.transform <- function(g)
 graph.cem <- function(g, model, k, max_iter = 10, ncores=1,
                       bandwidth="Sturges"){
 
-  if(class(g) == "list" && class(g[[1]]) == "igraph"){
+  if(is(g,"list") && is(g[[1]],"igraph")){
     g <- f.transform(g)
   }
   `%dopar%` <- foreach::`%dopar%`
@@ -2498,7 +2513,7 @@ graph.cem <- function(g, model, k, max_iter = 10, ncores=1,
 #' @export
 graph.kmeans <- function(x, k, nstart=2) {
 
-  if(class(x) == "list" && class(x[[1]]) == "igraph"){
+  if(is(x,"list") && is(x[[1]],"igraph")){
     x <- f.transform(x)
   }
   sil <- -1
@@ -2873,7 +2888,7 @@ fast.spectral.density <- function(G, from = NULL, to = NULL, npoints = 2000,
 #'                                                   numCores = 1)
 #' estimated.parameter1
 #'
-#' \dontrun{
+#' \donttest{
 #' ### Example giving a function instead of a model
 #'
 #' # Defining the model to use
@@ -2896,13 +2911,13 @@ fast.graph.param.estimator <- function(G, model, lo = NULL, hi = NULL,
   graph <- G
   # When the model is a function then check if the smallest and largest values
   # that the parameter can take was also provided
-  if(class(model) == "function" && (is.null(lo) || is.null(hi))){
+  if(is(model,"function") && (is.null(lo) || is.null(hi))){
     stop("You must specify the largest and smallest parameter value that the graph model can take")
   }
   # If 'model' is a character then define the parameter interval search.
   # Also recover the functions that generate each model
   fun <- model
-  if(class(model) == "character"){
+  if(is(model,"character")){
     if(model == "ER"){
       if(is.null(lo))
         lo <- 0
@@ -2959,7 +2974,7 @@ fast.graph.param.estimator <- function(G, model, lo = NULL, hi = NULL,
     mid1 <- (2*lo + hi)/3
     mid2 <- (2*hi + lo)/3
     # Generate graph using parameter mid1
-    if(class(model) == 'function'){
+    if(is(model,'function')){
       Graph1 <- fun(n,mid1)
     } else {
       Graph1 <- fun(n,mid1, as_matrix = FALSE)
@@ -2970,7 +2985,7 @@ fast.graph.param.estimator <- function(G, model, lo = NULL, hi = NULL,
     # Free memory allocated by Graph1
     rm(Graph1)
     # Generate graph using parameter mid2
-    if(class(model) == 'function'){
+    if(is(model,'function')){
       Graph2 <- fun(n,mid2)
     } else {
       Graph2 <- fun(n,mid2, as_matrix = FALSE)
@@ -2995,7 +3010,3 @@ fast.graph.param.estimator <- function(G, model, lo = NULL, hi = NULL,
 
   return (list("param" = param,"L1_dist" = dist))
 }
-
-
-
-
