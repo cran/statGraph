@@ -48,7 +48,7 @@ graph and of the random graph model.
  for(i in 3:4){
    g[[i]] <- igraph::sample_gnp(n=10, p=1)
  }
- res <- graph.cem(g, model="ER", k=2, max_iter=1)
+ res <- graph.cem(g, model="ER", k=2, max_iter=1,eps=0.1)
  res
  }
 }

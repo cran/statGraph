@@ -91,7 +91,7 @@ G <- igraph::sample_gnp(n=50, p=0.5)
 result1 <- graph.param.estimator(G, "ER", eps=0.25)
 result1
 
-\donttest{
+
 # Using a function to describe the graph model
 # Erdos-Renyi graph
 set.seed(1)
@@ -100,7 +100,7 @@ model <- function(n, p) {
 }
 result2 <- graph.param.estimator(G, model,  seq(0.2, 0.8, 0.1))
 result2
-}
+
 
 
 }

@@ -66,11 +66,12 @@ graph.kmeans <- function(Graphs, k, nstart=2,dist = "JS",...) {
 
   for (ns in 1:nstart) {
     ## random initialization of the clusters
-    label <- sample(seq(1:k), nGraphs, replace=TRUE)
+    label <- sample(rep_len(1:k,nGraphs))
 
     converged <- FALSE
     while(converged == FALSE) {
       centroid <- list()
+
       for (j in 1:k) {
         centroid[[j]] <- get.mean.spectral.density(Graphs[label == j])
       }

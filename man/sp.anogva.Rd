@@ -44,14 +44,14 @@ G <- list()
 G[[1]] <- igraph::sample_gnp(50, 0.5)
 G[[2]] <- igraph::sample_gnp(50, 0.5)
 G[[3]] <- igraph::sample_gnp(50, 0.5)
-result1 <- sp.anogva(G, model, maxBoot = 300)
+result1 <- sp.anogva(G, model, maxBoot = 10,eps=0.01,search="ternary")
 result1
 
 # Under H1
 G[[1]] <- igraph::sample_gnp(50, 0.5)
-G[[2]] <- igraph::sample_gnp(50, 0.55)
+G[[2]] <- igraph::sample_gnp(50, 0.75)
 G[[3]] <- igraph::sample_gnp(50, 0.5)
-result2 <- sp.anogva(G, model, maxBoot = 300)
+result2 <- sp.anogva(G, model, maxBoot = 10,eps=0.01,search="ternary")
 result2
 }
 

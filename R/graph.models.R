@@ -2,8 +2,8 @@
 get.graph.model <- function(model,mean_deg = 1){
   if(methods::is(model,"function")) return (model)
   else if (methods::is(model,"character")){
-    if(model == "BA") return (BAfun(mean_deg))
-    if(model == "WS") return (WSfun(as.integer(mean_deg/2)))
+    if(model == "BA") return (BAfun(max(mean_deg,1)))
+    if(model == "WS") return (WSfun(max(ceiling(mean_deg),1)))
     return (match.fun(model))
   }
   stop("Graph model should be either an string ('ER','WS','BA', or 'GRG') or a function")
@@ -87,7 +87,7 @@ graph.model.spectral.density <- function(model,n,p,mean_deg = 1,ngraphs = 50,met
 }
 
 # returns the degree-based spectral density of a graph model
-# extra: aditional parameter for the graph model
+# extra: additional parameter for the graph model
 graph.fast.model.spectral.density <- function(model,n,p,mean_deg = 1,ngraphs = 50,...){
 
   # recover spectral density parameters
@@ -165,7 +165,7 @@ get.model.interval <- function(n,m,model,parameter,eps,search){
       } else if(model == "KR"){
         p = (2*m)/n
         intervals = list(list("lo" = p,"hi" = p))
-      } else {
+      } else {get.mean.spectral.density
         # the search intervals were found to be the best after extensive experiments to make it work when ternary search is used to minimize KL divergence.
         # Nonetheless, this intervals do not affect the estimated parameters for other "distance" measures
         if (model == "WS") intervals = list(list("lo" = 0,"hi" = 0.4),list("lo" = 0.4,"hi" = 1))

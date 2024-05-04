@@ -49,14 +49,14 @@
 #' G[[1]] <- igraph::sample_gnp(50, 0.5)
 #' G[[2]] <- igraph::sample_gnp(50, 0.5)
 #' G[[3]] <- igraph::sample_gnp(50, 0.5)
-#' result1 <- sp.anogva(G, model, maxBoot = 300)
+#' result1 <- sp.anogva(G, model, maxBoot = 10,eps=0.01,search="ternary")
 #' result1
 #'
 #' # Under H1
 #' G[[1]] <- igraph::sample_gnp(50, 0.5)
-#' G[[2]] <- igraph::sample_gnp(50, 0.55)
+#' G[[2]] <- igraph::sample_gnp(50, 0.75)
 #' G[[3]] <- igraph::sample_gnp(50, 0.5)
-#' result2 <- sp.anogva(G, model, maxBoot = 300)
+#' result2 <- sp.anogva(G, model, maxBoot = 10,eps=0.01,search="ternary")
 #' result2
 #' }
 #'
@@ -73,15 +73,17 @@ sp.anogva <- function(Graphs, model, maxBoot = 100,...) {
   for(l in 1:nGraphs) {
     p.hat[[l]] <- graph.param.estimator(Graph = Graphs[[l]], model = model,...)$param
   }
+  #mean_deg = Reduce(f = "+", Map(function (G) { ( igraph::ecount(G)/igraph::vcount(G)) },Graphs))/nGraphs # error
   # obtain the mean degree of all graphs
-  mean_deg = Reduce(f = "+", Map(function (G) { (2*igraph::ecount(G)/igraph::vcount(G)) },Graphs))/nGraphs
-  # recover graph model, and set the extra parameter to ensure to generate graphs with the same edge density
-  graph_gen_fun <- get.graph.model(model = model,mean_deg = get.extra.parameter(model,mean_deg))
+  mean_deg = Map(function (G) { as.integer(ceiling(igraph::ecount(G)/igraph::vcount(G))) },Graphs)
+  # recover the generator functions mantaining the average degree if necessary
+  graph_gen_functions = Map(function (mdeg){ get.graph.model(model,mean_deg = mdeg) },mean_deg)
 
   p.boot <- matrix(0, nGraphs, maxBoot)
   for (boot in 1:maxBoot) {
     g.boot <- list()
     for (l in 1:nGraphs) {
+      graph_gen_fun <- graph_gen_functions[[l]]
       n <- igraph::vcount(Graphs[[l]])
       Graph <- graph_gen_fun(n,p.hat[[l]])
       p.boot[l,boot] <- graph.param.estimator(Graph = Graph, model = model, ...)$param
@@ -110,12 +112,4 @@ sp.anogva <- function(Graphs, model, maxBoot = 100,...) {
   rval <- list(statistic=F_, p.value=p, method=method, data.name=data.name, estimate=estimate)
   class(rval) <- "htest"
   return(rval)
-}
-
-
-# return the extra parameter required by some graph models
-get.extra.parameter <- function(model,mean_deg){
-  if(model == "BA") return (mean_deg)
-  if(model == "WS") return (mean_deg/2)
-  return (1)
 }

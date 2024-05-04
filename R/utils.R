@@ -7,7 +7,7 @@ graph.eigenvalues <- function(Graph){
   if(!is.null(Graph$eigenvalues)){
     return (Graph$eigenvalues)
   } else {
-    A <- igraph::get.adjacency(Graph)
+    A <- igraph::as_adjacency_matrix(Graph)
     eigenvalues <- as.numeric(eigen(A, only.values=TRUE, symmetric=TRUE)$values)
     eigenvalues <- eigenvalues/sqrt(nrow(A))
     rm(A)
@@ -117,7 +117,7 @@ get.largest.eigenvalue <- function(Graphs){
 
 # transform a list of graphs to their respective adjacency matrices
 graphList.to.adjList <- function(Graphs){
-  if(methods::is(Graphs,'igraph')){ return(igraph::get.adjacency(Graphs,type = "both")) }
+  if(methods::is(Graphs,'igraph')){ return(igraph::as_adjacency_matrix(Graphs,type = "both")) }
   else if(methods::is(Graphs,'list') && methods::is(Graphs[[1]],'igraph')){
     d <- lapply(Graphs, graphList.to.adjList)
     return(d)

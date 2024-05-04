@@ -102,7 +102,9 @@ GIC <- function(Graph, model, p=NULL, dist = "KL", ...) {
   data.name <- deparse(substitute(Graph))
 
   n = igraph::vcount(Graph)
-  avg_deg = as.integer(mean(igraph::degree(Graph)))
+  m = igraph::ecount(Graph)
+  avg_deg = as.integer(ceiling(m/n))
+
   graph_den <- Graph$density
   model_den <- NULL
   if(is.null(graph_den)){
@@ -120,7 +122,7 @@ GIC <- function(Graph, model, p=NULL, dist = "KL", ...) {
   out <- distance(graph_den,model_den,dist=dist)
   ###
   method_info <- "Graph Information criterion"
-  output <- list(method = method_info, info = graph_den$info, data.name = data.name, value = out,dist = "dist")
+  output <- list(method = method_info, info = graph_den$info, data.name = data.name, value = out,dist = dist)
   class_obj <- new("statGraph",output)
   return(class_obj)
 }
