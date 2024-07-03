@@ -1,4 +1,4 @@
-#' ANOGVA Analysis Of Graph Variability
+#' Analysis Of Graph Variability (ANOGVA)
 #'
 #' \code{anogva} statistically tests whether two or more sets of graphs are generated
 #' by the same random graph model. It is a generalization of the \code{takahashi.test}
@@ -104,7 +104,7 @@ anogva <- function(Graphs, labels, maxBoot=1000, dist = "KL",...) {
   ###
   statistic        <- distOrig
   names(statistic) <- "statistic"
-  method_info           <- "Analysis of Graph Variability"
+  method_info      <- "Analysis of Graph Variability"
   rval             <- list(statistic = statistic, p.value = pvalue, method = method_info, data.name = data.name)
   class(rval)      <- "htest"
   return(rval)

@@ -1,6 +1,3 @@
-#====================================
-#Kmeans
-
 #' K-means for Graphs
 #'
 #' \code{graph.kmeans} clusters graphs following a k-means algorithm based on the
@@ -120,7 +117,7 @@ graph.kmeans <- function(Graphs, k, nstart=2,dist = "JS",...) {
   ###
   method_info <- "K-means for Graphs"
   info <- "Clustering the graphs following a k-means algorithm"
-  value <- list(method=method_info, info=info, data.name=data.name, cluster=label.final)
-  obj_res <- new('statGraph',value)
-  return(obj_res)
+  output <- list(method=method_info, info=info, data.name=data.name, cluster=label.final)
+  class(output) <- "statGraph"
+  return(output)
 }

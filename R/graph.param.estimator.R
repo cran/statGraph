@@ -1,4 +1,4 @@
-#' Graph parameter estimator
+#' Graph Parameter Estimator
 #'
 #' \code{graph.param.estimator} estimates the parameter that best approximates
 #' the model to the observed graph according to the Graph Information Criterion
@@ -93,7 +93,7 @@
 #' result1 <- graph.param.estimator(G, "ER", eps=0.25)
 #' result1
 #'
-#' 
+#'
 #' # Using a function to describe the graph model
 #' # Erdos-Renyi graph
 #' set.seed(1)
@@ -102,7 +102,7 @@
 #' }
 #' result2 <- graph.param.estimator(G, model,  seq(0.2, 0.8, 0.1))
 #' result2
-#' 
+#'
 #'
 #'
 #' @export
@@ -121,7 +121,7 @@ graph.param.estimator <- function(Graph, model, interval = NULL, eps=0.01,search
       condition <- TRUE
     }
     if(condition){
-      warning("Ternary search is not guaranteed to work when dist = 'KL'.",immediate. = TRUE)
+      warning("Ternary search does not guarantee to obtain the parameter with the smallest 'KL' divergence.",immediate. = TRUE)
     }
   }
   #
@@ -133,11 +133,11 @@ graph.param.estimator <- function(Graph, model, interval = NULL, eps=0.01,search
   # search the parameter that minimizes the norm/divergence
   search_output <- graph.model.param.search(Graph = Graph,model = model, search_interval = search_interval,eps = eps,...)
   ###
-  method    <- "Graph parameter estimator"
+  method    <- "Graph Parameter Estimator"
   info     <- Graph$density$info
   output     <- list(method=method, info=info, data.name=data.name, param=search_output$param, dist=search_output$dist)
-  class_obj <- new("statGraph",output)
-  return(class_obj)
+  class(output) <- "statGraph"
+  return(output)
 }
 
 # function for parameter searching

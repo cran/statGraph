@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.cem.R
 \name{graph.cem}
 \alias{graph.cem}
-\title{Clustering Expectation-Maximization for Graphs (graph.cem)}
+\title{Graph Clustering Expectation-Maximization (gCEM)}
 \usage{
 graph.cem(Graphs, model, k, max_iter = 10, ...)
 }

@@ -1,4 +1,4 @@
-#' Clustering Expectation-Maximization for Graphs (graph.cem)
+#' Graph Clustering Expectation-Maximization (gCEM)
 #'
 #' \code{graph.cem} clusters graphs following an expectation-maximization algorithm based
 #' on the Kullback-Leibler divergence between the spectral densities of the
@@ -134,14 +134,12 @@ graph.cem <- function(Graphs, model, k, max_iter = 10, ...){
     prevlabels <- labels
   }
   ###
-  method_info <- "Clustering Expectation-Maximization for Graphs "
+  method_info <- "Graph Clustering Expectation-Maximization "
   info <- ret[[1]]$info # info of the parameter estimator
   result <- list("cluster"=labels, "parameters" = p)
   output <- list(method=method_info, info=info, data.name=data.name, cluster=result$cluster, parameters=result$parameters)
-  class_obj <- new("statGraph",output)
-  return(class_obj)
-  #ret <- list("cluster"=labels, "parameters" = p)
-  #return(ret)
+  class(output) <- "statGraph"
+  return(output)
 }
 
 

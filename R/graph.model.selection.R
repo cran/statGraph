@@ -1,4 +1,4 @@
-#' Graph model selection
+#' Graph Model Selection
 #'
 #' \code{graph.model.selection} selects the graph model that best approximates the
 #' observed graph according to the Graph Information Criterion (GIC).
@@ -121,7 +121,6 @@ graph.model.selection <- function(Graph, models=NULL, parameters = NULL,...) {
   method_info <- "Graph Model Selection"
   info <- "Selects the graph model that best approximates the observed graph."
   output <- list(method=method_info, info=info, data.name=data.name, model=m, estimates=results)
-  class_obj <- new("statGraph",output)
-  return(class_obj)
-  #return(list("model"=m, "estimates"=results))
+  class(output) <- "statGraph"
+  return(output)
 }

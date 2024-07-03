@@ -2,7 +2,7 @@
 % Please edit documentation in R/anogva.R
 \name{anogva}
 \alias{anogva}
-\title{ANOGVA Analysis Of Graph Variability}
+\title{Analysis Of Graph Variability (ANOGVA)}
 \usage{
 anogva(Graphs, labels, maxBoot = 1000, dist = "KL", ...)
 }

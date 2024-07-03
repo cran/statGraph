@@ -121,8 +121,8 @@ GIC <- function(Graph, model, p=NULL, dist = "KL", ...) {
   #
   out <- distance(graph_den,model_den,dist=dist)
   ###
-  method_info <- "Graph Information criterion"
+  method_info <- "Graph Information Criterion"
   output <- list(method = method_info, info = graph_den$info, data.name = data.name, value = out,dist = dist)
-  class_obj <- new("statGraph",output)
-  return(class_obj)
+  class(output) <- "statGraph"
+  return(output)
 }

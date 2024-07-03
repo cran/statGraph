@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.mult.scaling.R
 \name{graph.mult.scaling}
 \alias{graph.mult.scaling}
-\title{Multidimensional scaling of graphs}
+\title{Multidimensional Scaling of Graphs}
 \usage{
 graph.mult.scaling(
   Graphs,

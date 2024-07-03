@@ -1,4 +1,4 @@
-#' Hierarchical cluster analysis on a list of graphs.
+#' Hierarchical Cluster Analysis on a List of Graphs
 #'
 #' Given a list of graphs, \code{graph.hclust} builds a hierarchy of clusters
 #' according to the Jensen-Shannon divergence between graphs.

@@ -1,4 +1,4 @@
-#' Graph spectral entropy
+#' Graph Spectral Entropy
 #'
 #' \code{graph.entropy} returns the spectral entropy of an undirected graph.
 #'
@@ -43,8 +43,8 @@ graph.entropy <- function(Graph,...) {
   y[valid_idx] <- y[valid_idx]*log(y[valid_idx])
   entropy <- -trapezoidSum(f$x, y)
   # return class
-  method_info <- "Spectral entropy of a graph"
-  value <- list(method=method_info, info=f$info, data.name=data.name, entropy=entropy)
-  class_obj <- new("statGraph",value)
-  return(class_obj)
+  method_info <- "Spectral Entropy of a Graph"
+  output <- list(method=method_info, info=f$info, data.name=data.name, entropy=entropy)
+  class(output) <- "statGraph"
+  return(output)
 }

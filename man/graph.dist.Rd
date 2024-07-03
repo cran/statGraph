@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.dist.R
 \name{graph.dist}
 \alias{graph.dist}
-\title{Distance matrix on a list of graphs.}
+\title{Distance Matrix on a List of Graphs}
 \usage{
 graph.dist(Graphs, dist = "JS", ...)
 }

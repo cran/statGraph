@@ -1,4 +1,4 @@
-#' Distance matrix on a list of graphs.
+#' Distance Matrix on a List of Graphs
 #'
 #' Given a list of graphs, \code{graph.dist} builds a distance matrix
 #' according to the Jensen-Shannon divergence, L2 norm, or L1 norm
@@ -49,7 +49,6 @@ graph.dist <- function(Graphs,dist = "JS",...) {
       D[i,j] <- distance(Graphs[[i]]$density,Graphs[[j]]$density,dist = dist)
     }
   }
-  #class(D) <- "dist"
   return(D)
 }
 

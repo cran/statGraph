@@ -1,4 +1,4 @@
-#' Multidimensional scaling of graphs
+#' Multidimensional Scaling of Graphs
 #'
 #' \code{graph.mult.scaling} performs multidimensional scaling of graphs. It
 #' takes the Jensen-Shannon divergence between graphs (JS) and uses the
@@ -96,6 +96,6 @@ graph.mult.scaling <- function(Graphs, plot=TRUE, type="n", dist = "JS",
   method <- "Multidimensional scaling of graphs"
   info <- ""
   output <- list(method=method, info=info, values=fit)
-  class_obj <- new("statGraph",output)
-  return(class_obj)
+  class(output) <- "statGraph"
+  return(output)
 }

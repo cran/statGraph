@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.model.selection.R
 \name{graph.model.selection}
 \alias{graph.model.selection}
-\title{Graph model selection}
+\title{Graph Model Selection}
 \usage{
 graph.model.selection(Graph, models = NULL, parameters = NULL, ...)
 }

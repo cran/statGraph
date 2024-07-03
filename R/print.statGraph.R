@@ -1,12 +1,5 @@
-#### to show nice results
-# set your class name and its representation is list here.
-setClass( "statGraph", representation("list"))
-
-
-# show method (here's how the output would be printed
-# you can format to whatever you want... to show and how to show
-setMethod("show", "statGraph", function(object) {
-  x <- object
+#' @exportS3Method print statGraph
+print.statGraph <- function(x, ...){
   if(any(names(x) == "method")) cat("\n       ", x$method, "\n\n")
 
   if(any(names(x) == "info")) cat("-", x$info, "\n\n")
@@ -45,4 +38,4 @@ setMethod("show", "statGraph", function(object) {
   if(any(names(x) == "L1_dist")) cat("L1_dist =", x$L1_dist, "\n")
 
   cat("\n")
-})
+}

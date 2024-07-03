@@ -1,4 +1,4 @@
-#' Auto Correlation Function Estimation for Graphs
+#' Autocorrelation Function Estimation for Graphs
 #'
 #' The function \code{graph.acf} computes estimates of the autocorrelation
 #' function for graphs.

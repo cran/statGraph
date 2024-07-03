@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.takahashi.test.R
 \name{graph.takahashi.test}
 \alias{graph.takahashi.test}
-\title{Test for the Jensen-Shannon divergence between graphs}
+\title{Test for the Jensen-Shannon Divergence Between Graphs}
 \usage{
 graph.takahashi.test(Graphs1, Graphs2, maxBoot = 1000, dist = "JS", ...)
 }

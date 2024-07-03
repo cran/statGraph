@@ -142,7 +142,7 @@ get.model.interval <- function(n,m,model,parameter,eps,search){
     parameters <- NULL
     if(is.null(parameter)){
       if (model == "GRG") parameters <- seq(0,sqrt(2), eps)
-      else if (model == "BA") parameters <- seq(0,3, eps)
+      else if (model == "BA") parameters <- seq(1e-6,3, eps)
       else if (model == "KR") parameters <- as.integer(seq(0, 1, eps)*n)
       else parameters <- seq(0, 1, eps)
       return (parameters)
@@ -169,7 +169,7 @@ get.model.interval <- function(n,m,model,parameter,eps,search){
         # the search intervals were found to be the best after extensive experiments to make it work when ternary search is used to minimize KL divergence.
         # Nonetheless, this intervals do not affect the estimated parameters for other "distance" measures
         if (model == "WS") intervals = list(list("lo" = 0,"hi" = 0.4),list("lo" = 0.4,"hi" = 1))
-        else if (model == "BA") intervals = list(list("lo" = 0,"hi" = 1.25),list("lo" = 1.25,"hi" = 2.25),list("lo" = 2.25,"hi" = 3))
+        else if (model == "BA") intervals = list(list("lo" = 1e-6,"hi" = 1.25),list("lo" = 1.25,"hi" = 2.25),list("lo" = 2.25,"hi" = 3))
         else if (model == "GRG") intervals = list(list("lo" = 0,"hi" = 0.8),list("lo" = 0.8,"hi" = 1.4))
       }
     }

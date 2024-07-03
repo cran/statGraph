@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.hclust.R
 \name{graph.hclust}
 \alias{graph.hclust}
-\title{Hierarchical cluster analysis on a list of graphs.}
+\title{Hierarchical Cluster Analysis on a List of Graphs}
 \usage{
 graph.hclust(Graphs, k, clus_method = "complete", dist = "JS", ...)
 }

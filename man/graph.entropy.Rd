@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.entropy.R
 \name{graph.entropy}
 \alias{graph.entropy}
-\title{Graph spectral entropy}
+\title{Graph Spectral Entropy}
 \usage{
 graph.entropy(Graph, ...)
 }

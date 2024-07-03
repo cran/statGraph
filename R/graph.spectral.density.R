@@ -1,4 +1,4 @@
-#' Graph spectral density
+#' Graph Spectral Density
 #'
 #' \code{graph.spectral.density} returns the exact or degree-based spectral density
 #' in the interval <\code{from},\code{to}> by using \code{npoints} discretization points.
@@ -62,7 +62,7 @@
 #' Physical Review E, 99(4), 042309.
 #'
 #' @examples
-#' set.seed(42)
+#' set.seed(1)
 #' G <- igraph::sample_smallworld(dim = 1, size = 50, nei = 2, p = 0.2)
 #'
 #' # Obtain the spectral density
@@ -136,13 +136,11 @@ graph.fast.spectral.density <- function(Graph, from = NULL, to = NULL, npoints =
   # close cluster
   parallel::stopCluster(cl)
   # return density function as class
-  method_info <- "Spectral density of a graph"
+  method_info <- "Spectral Density of a Graph"
   info <- "Spectral density obtained with the degree-based method"
   value <- list(method=method_info, info=info, data.name=data.name, x=x,y=y,from=from,to=to)
-  #attr(value, "class") <- "statGraph"
-  class_obj <- new("statGraph",value)
-  return (class_obj)
-  #return (list("x" = x,"y" = y,"from" = from,"to" = to,"method"="fast"))
+  class(value) <- "statGraph"
+  return (value)
 }
 
 
@@ -153,11 +151,11 @@ graph.diag.spectral.density <- function(Graph, from=NULL, to=NULL, bandwidth="Si
   eigenvalues <- graph.eigenvalues(Graph = Graph)
   den_fun <- gaussianDensity(eigenvalues, from, to, bandwidth, npoints)
   ###
-  method_info <- "Spectral density of a graph"
+  method_info <- "Spectral Density of a Graph"
   info <- "Spectral density obtained with the exact method"
   value <- list(method=method_info, info=info, data.name=data.name, x=den_fun$x,y=den_fun$y,from=den_fun$from,to=den_fun$to)
-  class_obj <- new("statGraph",value)
-  return (class_obj)
+  class(value) <- "statGraph"
+  return (value)
 }
 
 

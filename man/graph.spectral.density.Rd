@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.spectral.density.R
 \name{graph.spectral.density}
 \alias{graph.spectral.density}
-\title{Graph spectral density}
+\title{Graph Spectral Density}
 \usage{
 graph.spectral.density(Graph, method = "diag", ...)
 }
@@ -47,7 +47,7 @@ A list with class "statGraph" containing the following components:
 in the interval <\code{from},\code{to}> by using \code{npoints} discretization points.
 }
 \examples{
-set.seed(42)
+set.seed(1)
 G <- igraph::sample_smallworld(dim = 1, size = 50, nei = 2, p = 0.2)
 
 # Obtain the spectral density

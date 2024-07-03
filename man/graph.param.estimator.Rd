@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.param.estimator.R
 \name{graph.param.estimator}
 \alias{graph.param.estimator}
-\title{Graph parameter estimator}
+\title{Graph Parameter Estimator}
 \usage{
 graph.param.estimator(
   Graph,
