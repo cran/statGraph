@@ -19,13 +19,13 @@ compute their spectral density.}
 
 \item{maxBoot}{integer indicating the number of bootstrap resamplings (default \code{1000}).}
 
-\item{dist}{string indicating if you want to use the "JS" (default) , "L1" or "L2"
-distances. "JS" means Jensen-Shannon divergence.}
+\item{dist}{string indicating if you want to use the 'JS' (default) , 'L1' or 'L2'
+distances. 'JS' means Jensen-Shannon divergence.}
 
 \item{...}{Other relevant parameters for \code{\link{graph.spectral.density}}.}
 }
 \value{
-A list with class "htest" containing the following components:
+A list with class 'htest' containing the following components:
 \item{\code{statistic:}}{ the value of the Jensen-Shannon divergence (default), L1 or L2 between 'Graphs1' and 'Graphs2'.}
 \item{\code{p.value:}}{ the p-value of the test.}
 \item{\code{method:}}{ a string indicating the used method.}
@@ -38,20 +38,20 @@ This bootstrap test is based on the Jensen-Shannon (JS) divergence between
 graphs.
 }
 \details{
-Given two lists of graphs, \code{Graphs1} and \code{Graphs2}, \code{graph.takahashi.test} tests H0: "JS
-divergence between \code{Graphs1} and \code{Graphs2} is \code{0}" against H1: "JS divergence between
-\code{Graphs1} and \code{Graphs2} is larger than \code{0}".
+Given two lists of graphs, \code{Graphs1} and \code{Graphs2}, \code{graph.takahashi.test} tests H0: 'JS
+divergence between \code{Graphs1} and \code{Graphs2} is \code{0}' against H1: 'JS divergence between
+\code{Graphs1} and \code{Graphs2} is larger than \code{0}'.
 }
 \examples{
 set.seed(1)
 G1 <- G2 <- list()
 for (i in 1:20) {
-  G1[[i]] <- igraph::sample_gnp(n=50, p=0.5)
+  G1[[i]] <- igraph::sample_gnp(n=50, p=0.500)
 }
 for (i in 1:20) {
-  G2[[i]] <- igraph::sample_gnp(n=50, p=0.51)
+  G2[[i]] <- igraph::sample_gnp(n=50, p=0.512)
 }
-result <- graph.takahashi.test(G1, G2, maxBoot=100)
+result <- graph.takahashi.test(G1, G2, maxBoot=500)
 result
 
 }

@@ -16,13 +16,13 @@ compute their spectral density.}
 
 \item{maxBoot}{integer indicating the number of bootstrap resamplings (default \code{1000}).}
 
-\item{dist}{string indicating if you want to use the "KL" (default), "JS" , "L1" or "L2"
-distances. "KL" means Kullback-Leibler divergence. "JS" means Jensen-Shannon divergence.}
+\item{dist}{string indicating if you want to use the 'KL' (default), 'JS' , 'L1' or 'L2'
+distances. 'KL' means Kullback-Leibler divergence. 'JS' means Jensen-Shannon divergence.}
 
 \item{...}{Other relevant parameters for \code{\link{graph.spectral.density}}.}
 }
 \value{
-A list with class "htest" containing the following components:
+A list with class 'htest' containing the following components:
 \item{\code{statistic:}}{ the statistic of the test.}
 \item{\code{p.value:}}{ the p-value of the test.}
 \item{\code{method:}}{ a string indicating the used method.}

@@ -8,9 +8,9 @@
 #' eigenvalues , such values will be used to
 #' compute their spectral density.
 #'
-#' @param model A string that indicates one of the following models: "ER"
-#' (Erdos-Renyi random graph model), "GRG" (geometric random graph model), "WS"
-#' (Watts-Strogatz random graph model), and "BA" (Barabási-Albert random graph
+#' @param model A string that indicates one of the following models: 'ER'
+#' (Erdos-Renyi random graph model), 'GRG' (geometric random graph model), 'WS'
+#' (Watts-Strogatz random graph model), and 'BA' (Barabási-Albert random graph
 #' model).
 #'
 #' @param maxBoot integer indicating the number of bootstrap resamples (default
@@ -18,7 +18,7 @@
 #'
 #' @param ... Other relevant parameters for \code{\link{graph.param.estimator}}.
 #'
-#' @return A list with class "htest" containing the following components:
+#' @return A list with class 'htest' containing the following components:
 #' \item{\code{statistic:}}{ the F statistic of the test.}
 #' \item{\code{p.value:}}{ the p-value of the test.}
 #' \item{\code{method:}}{ a string indicating the used method.}
@@ -42,7 +42,7 @@
 #' @examples
 #' \donttest{
 #' set.seed(1)
-#' model <- "ER"
+#' model <- 'ER'
 #' G <- list()
 #'
 #' # Under H0
@@ -62,53 +62,59 @@
 #'
 #'
 #' @export
-sp.anogva <- function(Graphs, model, maxBoot = 100,...) {
-  if(!valid.input(Graphs,level = 1)) stop("The input should be a list of igraph objects!")
-  data.name <- deparse(substitute(Graphs))
-  # compute and save the spectral density of the graphs
-  Graphs <- set.list.spectral.density(Graphs,...)
-  nGraphs <- length(Graphs)
-  p.hat <- list()
-  # estimate the parameter of each graph
-  for(l in 1:nGraphs) {
-    p.hat[[l]] <- graph.param.estimator(Graph = Graphs[[l]], model = model,...)$param
-  }
-  #mean_deg = Reduce(f = "+", Map(function (G) { ( igraph::ecount(G)/igraph::vcount(G)) },Graphs))/nGraphs # error
-  # obtain the mean degree of all graphs
-  mean_deg = Map(function (G) { as.integer(ceiling(igraph::ecount(G)/igraph::vcount(G))) },Graphs)
-  # recover the generator functions mantaining the average degree if necessary
-  graph_gen_functions = Map(function (mdeg){ get.graph.model(model,mean_deg = mdeg) },mean_deg)
-
-  p.boot <- matrix(0, nGraphs, maxBoot)
-  for (l in 1:nGraphs) {
-    graph_gen_fun <- graph_gen_functions[[l]]
-    n <- igraph::vcount(Graphs[[l]])
-	for (boot in 1:maxBoot) {
-      Graph <- graph_gen_fun(n,p.hat[[l]])
-      p.boot[l,boot] <- graph.param.estimator(Graph = Graph, model = model, ...)$param
-      rm(Graph)
+sp.anogva <- function(Graphs, model, maxBoot = 100, ...) {
+    if (!valid.input(Graphs, level = 1))
+        stop("The input should be a list of igraph objects!")
+    data.name <- deparse(substitute(Graphs))
+    # compute and save the spectral density of the graphs
+    Graphs <- set.list.spectral.density(Graphs, ...)
+    nGraphs <- length(Graphs)
+    p.hat <- list()
+    # estimate the parameter of each graph
+    for (l in 1:nGraphs) {
+        p.hat[[l]] <- graph.param.estimator(Graph = Graphs[[l]], model = model, ...)$param
     }
-  }
+    # mean_deg = Reduce(f = '+', Map(function (G) { ( igraph::ecount(G)/igraph::vcount(G)) },Graphs))/nGraphs
+    # # error obtain the mean degree of all graphs
+    mean_deg = Map(function(G) {
+        as.integer(ceiling(igraph::ecount(G)/igraph::vcount(G)))
+    }, Graphs)
+    # recover the generator functions mantaining the average degree if necessary
+    graph_gen_functions = Map(function(mdeg) {
+        get.graph.model(model, mean_deg = mdeg)
+    }, mean_deg)
 
-  var.boot <- array(0, nGraphs)
-  for(l in 1:nGraphs) {
-    var.boot[l] <- var(p.boot[l,])
-  }
-  SSres <- 0
-  SStr <- 0
-  m <- mean(as.numeric(as.array(p.hat)))
-  for(l in 1:nGraphs) {
-    SSres <- SSres + (maxBoot-1) * var.boot[l]
-    SStr <- SStr + (p.hat[[l]] - m)^2
-  }
-  F_ <- (SStr / (nGraphs-1)) / ( SSres / (nGraphs*maxBoot - nGraphs))
-  p <- pf(F_, df1=(nGraphs-1), df2=(nGraphs*maxBoot - nGraphs), lower.tail=FALSE)
-  ###
-  names(F_)  <- "F.value"
-  estimate <- unlist(p.hat)
-  names(estimate) <- paste("parameter", 1:length(estimate), sep='')
-  method <- "Semi-parametric Analysis Of Graph Variability"
-  rval <- list(statistic=F_, p.value=p, method=method, data.name=data.name, estimate=estimate)
-  class(rval) <- "htest"
-  return(rval)
+    p.boot <- matrix(0, nGraphs, maxBoot)
+    for (l in 1:nGraphs) {
+        graph_gen_fun <- graph_gen_functions[[l]]
+        n <- igraph::vcount(Graphs[[l]])
+        for (boot in 1:maxBoot) {
+            Graph <- graph_gen_fun(n, p.hat[[l]])
+            p.boot[l, boot] <- graph.param.estimator(Graph = Graph, model = model, ...)$param
+            rm(Graph)
+        }
+    }
+
+    var.boot <- array(0, nGraphs)
+    for (l in 1:nGraphs) {
+        var.boot[l] <- var(p.boot[l, ])
+    }
+    SSres <- 0
+    SStr <- 0
+    m <- mean(as.numeric(as.array(p.hat)))
+    for (l in 1:nGraphs) {
+        SSres <- SSres + (maxBoot - 1) * var.boot[l]
+        SStr <- SStr + (p.hat[[l]] - m)^2
+    }
+    F_ <- (SStr/(nGraphs - 1))/(SSres/(nGraphs * maxBoot - nGraphs))
+    p <- pf(F_, df1 = (nGraphs - 1), df2 = (nGraphs * maxBoot - nGraphs), lower.tail = FALSE)
+    ###
+    names(F_) <- "F.value"
+    estimate <- unlist(p.hat)
+    names(estimate) <- paste("parameter", 1:length(estimate), sep = "")
+    method <- paste0("Semi-parametric Analysis Of Graph Variability with\n       simulated p-value (based on ",
+        maxBoot, " replicates)")
+    rval <- list(statistic = F_, p.value = p, method = method, data.name = data.name, estimate = estimate,n = nGraphs)
+    class(rval) <- "htest"
+    return(rval)
 }

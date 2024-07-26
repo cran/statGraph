@@ -36,10 +36,13 @@
 #' graph.acf(G, plot=TRUE)
 #'
 #' @export
-graph.acf <- function(Graphs, plot=TRUE) {
-  if(!valid.input(Graphs,level = 1)) stop("The input should be a list of igraph objects!")
+graph.acf <- function(Graphs, plot = TRUE) {
+    if (!valid.input(Graphs, level = 1))
+        stop("The input should be a list of igraph objects!")
 
-  G.radius <- unlist(Map(f = function(G) { get.largest.eigenvalue(G) },Graphs))
-  res <- acf(G.radius, plot=plot)
-  return(res)
+    G.radius <- unlist(Map(f = function(G) {
+        get.largest.eigenvalue(G)
+    }, Graphs))
+    res <- acf(G.radius, plot = plot)
+    return(res)
 }

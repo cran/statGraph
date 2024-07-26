@@ -22,19 +22,19 @@ compute their spectral density.}
 \item{plot}{logical. If \code{TRUE} (default) the points chosen to represent the
 Jensen-Shannon divergence between graphs are plotted.}
 
-\item{type}{what type of plot should be drawn. The default value is \code{"n"},
+\item{type}{what type of plot should be drawn. The default value is \code{'n'},
 which indicates that the points will not be plotted (i. e. only the labels
 of the graphs will be plotted).}
 
-\item{dist}{string indicating if you want to use the "JS" (default), "L1" or "L2"
-distances. "JS" means Jensen-Shannon divergence.}
+\item{dist}{string indicating if you want to use the 'JS' (default), 'L1' or 'L2'
+distances. 'JS' means Jensen-Shannon divergence.}
 
-\item{main}{title of the plot (default value is "").}
+\item{main}{title of the plot (default value is '').}
 
 \item{...}{additional parameters for \code{\link{graph.spectral.density}}.}
 }
 \value{
-A list with class "statGraph" containing the following components:
+A list with class 'statGraph' containing the following components:
 \item{\code{method:}}{ a string indicating the used method.}
 \item{\code{info:}}{ a string showing details about the method.}
 \item{\code{data.name:}}{ a string with the data's name(s).}

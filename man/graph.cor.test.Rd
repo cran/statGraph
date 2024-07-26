@@ -18,7 +18,7 @@ eigenvalues , such values will be used to
 compute their spectral density.}
 }
 \value{
-A list with class "htest" containing the following components:
+A list with class 'htest' containing the following components:
 \item{\code{statistic:}}{ the value of the test statistic.}
 \item{\code{p.value:}}{ the p-value of the test.}
 \item{\code{method:}}{ a string indicating the used method.}
@@ -30,10 +30,12 @@ A list with class "htest" containing the following components:
 using Spearman's rho correlation coefficient.
 }
 \examples{
+library(mvtnorm)
+
 set.seed(1)
 G1 <- G2 <- list()
 
-p <- MASS::mvrnorm(50, mu=c(0,0), Sigma=matrix(c(1, 0.5, 0.5, 1), 2, 2))
+p <- mvtnorm::rmvnorm(50, mean=c(0,0), sigma=matrix(c(1, 0.5, 0.5, 1), 2, 2))
 
 ma <- max(p)
 mi <- min(p)

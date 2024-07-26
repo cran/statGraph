@@ -17,13 +17,13 @@ compute their spectral density.}
 \item{nstart}{the number of trials of k-means clusterizations. The algorithm
 returns the clusterization with the best silhouette.}
 
-\item{dist}{string indicating if you want to use the "JS" (default), "L1" or "L2"
-distances. "JS" means Jensen-Shannon divergence.}
+\item{dist}{string indicating if you want to use the 'JS' (default), 'L1' or 'L2'
+distances. 'JS' means Jensen-Shannon divergence.}
 
 \item{...}{Other relevant parameters for \code{\link{graph.spectral.density}}.}
 }
 \value{
-A list with class "statGraph" containing the following components:
+A list with class 'statGraph' containing the following components:
 \item{\code{method:}}{ a string indicating the used method.}
 \item{\code{info:}}{ a string showing details about the method.}
 \item{\code{data.name:}}{ a string with the data's name(s).}
@@ -48,11 +48,11 @@ res
 
 }
 \references{
-MacQueen, James. "Some methods for classification and analysis of
-multivariate observations." Proceedings of the fifth Berkeley symposium on
+MacQueen, James. 'Some methods for classification and analysis of
+multivariate observations.' Proceedings of the fifth Berkeley symposium on
 mathematical statistics and probability. Vol. 1. No. 14. 1967.
 
-Lloyd, Stuart. "Least squares quantization in PCM." IEEE transactions on
+Lloyd, Stuart. 'Least squares quantization in PCM.' IEEE transactions on
 information theory 28.2 (1982): 129-137.
 }
 \keyword{k-means}

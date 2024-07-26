@@ -25,15 +25,15 @@ There are other parameters that depend on the value of the parameter \code{metho
 If \code{method='diag'}, then the parameter \code{bandwidth} can be used.
 This parameter is a string that specifies the criterion to choose the
 bandwidth during the spectral density estimation. Choose between the
-following criteria: "Silverman" (default), "Sturges", "bcv", "ucv" and "SJ".
-"bcv" is an abbreviation of biased cross-validation, while "ucv" means
-unbiased cross-validation. "SJ"  implements the methods of Sheather & Jones
+following criteria: 'Silverman' (default), 'Sturges', 'bcv', 'ucv' and 'SJ'.
+'bcv' is an abbreviation of biased cross-validation, while 'ucv' means
+unbiased cross-validation. 'SJ'  implements the methods of Sheather & Jones
 (1991) to select the bandwidth using pilot estimation of derivatives.
 Otherwise, if \code{method='fast'}, then the parameter \code{numCores} can be used. This parameter
 specifies the number of cores (default \code{1}) to use for parallelization.}
 }
 \value{
-A list with class "statGraph" containing the following components:
+A list with class 'statGraph' containing the following components:
 \item{\code{method:}}{ a string indicating the used method.}
 \item{\code{info:}}{ a string showing details about the method.}
 \item{\code{data.name:}}{ a string with the data's name(s).}

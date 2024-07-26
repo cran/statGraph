@@ -4,7 +4,7 @@
 \alias{graph.hclust}
 \title{Hierarchical Cluster Analysis on a List of Graphs}
 \usage{
-graph.hclust(Graphs, k, clus_method = "complete", dist = "JS", ...)
+graph.hclust(Graphs, k = NULL, clus_method = "complete", dist = "JS", ...)
 }
 \arguments{
 \item{Graphs}{a list of undirected graphs.
@@ -12,23 +12,23 @@ If each graph has the  attribute \code{eigenvalues} containing its
 eigenvalues , such values will be used to
 compute their spectral density.}
 
-\item{k}{the number of clusters.}
+\item{k}{the number of clusters. If NULL, it won't return the computed clustering.}
 
 \item{clus_method}{the agglomeration method to be used. This should be (an
-unambiguous abbreviation of) one of '"ward.D"', '"ward.D2"', '"single"',
-'"complete"', '"average"' (= UPGMA), '"mcquitty"' (= WPGMA), '"median"'
-(= WPGMC) or '"centroid"' (= UPGMC).}
+unambiguous abbreviation of) one of ''ward.D'', ''ward.D2'', ''single'',
+''complete'', ''average'' (= UPGMA), ''mcquitty'' (= WPGMA), ''median''
+(= WPGMC) or ''centroid'' (= UPGMC).}
 
-\item{dist}{string indicating if you want to use the "JS" (default), "L1" or "L2"
-distances. "JS" means Jensen-Shannon divergence.}
+\item{dist}{string indicating if you want to use the 'JS' (default), 'L1' or 'L2'
+distances. 'JS' means Jensen-Shannon divergence.}
 
 \item{...}{Other relevant parameters for \code{\link{graph.spectral.density}}.}
 }
 \value{
-A list containing:
-\item{\code{hclust:}}{ an object of class \code{hclust} which describes the tree produced
-by the clustering process.}
-\item{\code{cluster:}}{ the clustering labels for each graph.}
+A list containing the following elements:
+\item{\code{hclust}:}{ A class of type 'hclust'.}
+\item{\code{cluster:}}{ A vector of the same length of \code{Graphs} containing the
+clusterization labels.}
 }
 \description{
 Given a list of graphs, \code{graph.hclust} builds a hierarchy of clusters

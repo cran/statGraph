@@ -15,7 +15,7 @@ compute its spectral density.}
 \item{...}{Other relevant parameters for \code{\link{graph.spectral.density}}.}
 }
 \value{
-A list with class "statGraph" containing the following components:
+A list with class 'statGraph' containing the following components:
 \item{\code{method:}}{ a string indicating the used method.}
 \item{\code{info:}}{ a string showing details about the method.}
 \item{\code{data.name:}}{ a string with the data's name(s).}

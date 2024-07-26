@@ -13,18 +13,18 @@
 #' @param plot logical. If \code{TRUE} (default) the points chosen to represent the
 #' Jensen-Shannon divergence between graphs are plotted.
 #'
-#' @param type what type of plot should be drawn. The default value is \code{"n"},
+#' @param type what type of plot should be drawn. The default value is \code{'n'},
 #' which indicates that the points will not be plotted (i. e. only the labels
 #' of the graphs will be plotted).
 #'
-#' @param dist string indicating if you want to use the "JS" (default), "L1" or "L2"
-#' distances. "JS" means Jensen-Shannon divergence.
+#' @param dist string indicating if you want to use the 'JS' (default), 'L1' or 'L2'
+#' distances. 'JS' means Jensen-Shannon divergence.
 #'
-#' @param main title of the plot (default value is "").
+#' @param main title of the plot (default value is '').
 #'
 #' @param ... additional parameters for \code{\link{graph.spectral.density}}.
 #'
-#' @return A list with class "statGraph" containing the following components:
+#' @return A list with class 'statGraph' containing the following components:
 #' \item{\code{method:}}{ a string indicating the used method.}
 #' \item{\code{info:}}{ a string showing details about the method.}
 #' \item{\code{data.name:}}{ a string with the data's name(s).}
@@ -67,35 +67,33 @@
 #'
 #' @importFrom graphics text
 #' @export
-graph.mult.scaling <- function(Graphs, plot=TRUE, type="n", dist = "JS",
-                               main="", ...) {
-  if(!valid.input(Graphs,level = 1)) stop("The input should be a list of igraph objects!")
+graph.mult.scaling <- function(Graphs, plot = TRUE, type = "n", dist = "JS", main = "", ...) {
+    if (!valid.input(Graphs, level = 1))
+        stop("The input should be a list of igraph objects!")
 
-  data.name <- deparse(substitute(Graphs))
+    data.name <- deparse(substitute(Graphs))
 
-  Graphs <- set.list.spectral.density(Graphs, ...)
-  nGraphs <- length(Graphs)
+    Graphs <- set.list.spectral.density(Graphs, ...)
+    nGraphs <- length(Graphs)
 
-  d <- graph.dist(Graphs = Graphs,dist = dist,...)
+    d <- graph.dist(Graphs = Graphs, dist = dist, ...)
 
-  if (is.null(names(Graphs)))
-    names <- as.character(1:nGraphs)
-  else
-    names <- names(Graphs)
-  colnames(d) <- rownames(d) <- names
-  fit <- cmdscale(as.dist(d), k=2)
+    if (is.null(names(Graphs)))
+        names <- as.character(1:nGraphs) else names <- names(Graphs)
+    colnames(d) <- rownames(d) <- names
+    fit <- cmdscale(as.dist(d), k = 2)
 
-  x <- fit[,1]
-  y <- fit[,2]
-  names(x) <- names
-  names(y) <- names
-  if (plot) {
-    plot(x, y, xlab="x", ylab="y", main=main, type=type)
-    text(x, y, labels=names, cex=1)
-  }
-  method <- "Multidimensional scaling of graphs"
-  info <- ""
-  output <- list(method=method, info=info, values=fit)
-  class(output) <- "statGraph"
-  return(output)
+    x <- fit[, 1]
+    y <- fit[, 2]
+    names(x) <- names
+    names(y) <- names
+    if (plot) {
+        plot(x, y, xlab = "x", ylab = "y", main = main, type = type)
+        text(x, y, labels = names, cex = 1)
+    }
+    method <- "Multidimensional scaling of graphs"
+    info <- ""
+    output <- list(method = method, info = info, values = fit)
+    class(output) <- "statGraph"
+    return(output)
 }

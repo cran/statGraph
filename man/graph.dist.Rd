@@ -12,8 +12,8 @@ If each graph has the  attribute \code{eigenvalues} containing its
 eigenvalues , such values will be used to
 compute their spectral density.}
 
-\item{dist}{string indicating if you want to use the "JS" (default), "L1" or "L2"
-distances. "JS" means Jensen-Shannon divergence.}
+\item{dist}{string indicating if you want to use the 'JS' (default), 'L1' or 'L2'
+distances. 'JS' means Jensen-Shannon divergence.}
 
 \item{...}{Other relevant parameters for \code{\link{graph.spectral.density}}.}
 }
@@ -37,7 +37,7 @@ for(i in 6:10){
 for(i in 11:15){
  g[[i]] <- igraph::sample_gnp(n=50, p=0.9)
 }
-graph.dist(g, dist = "JS")
+graph.dist(g, dist = 'JS')
 
 
 }

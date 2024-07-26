@@ -1,7 +1,7 @@
 Package: statGraph
 Type: Package
 Title: Statistical Methods for Graphs
-Version: 1.0.2
+Version: 1.0.3
 Authors@R: c(
     person("Grover E.", "Castro Guzman", email="grover@usp.br", role=c("aut")), 
     person("Diogo R.", "da Costa", email="diogocost2@gmail.com", role=c("aut")),
@@ -12,7 +12,7 @@ Authors@R: c(
 Maintainer: Andre Fujita <andrefujita@usp.br>
 Depends: R (>= 4.3.0), stats, graphics
 Imports: igraph, MASS, rARPACK, cluster, foreach, parallel, doParallel,
-        methods
+        methods, mvtnorm
 Description: Contains statistical methods to analyze graphs, such as graph parameter estimation, 
     model selection based on the Graph Information Criterion, statistical tests to discriminate two or more populations of graphs, 
     correlation between graphs, and clustering of graphs.
@@ -22,15 +22,15 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyLoad: yes
 URL: https://www.ime.usp.br/~fujita/software.html
-Date: 2024-07-03
+Date: 2024-07-26
 NeedsCompilation: no
 RoxygenNote: 7.3.2
 Repository: CRAN
-Packaged: 2024-07-03 19:30:15 UTC; grover
+Packaged: 2024-07-26 19:20:04 UTC; grover
 Author: Grover E. Castro Guzman [aut],
   Diogo R. da Costa [aut],
   Taiane C. Ramos [aut],
   Suzana S. Santos [aut],
   Eduardo S. Lira [aut],
   Andre Fujita [aut, cre]
-Date/Publication: 2024-07-03 19:50:01 UTC
+Date/Publication: 2024-07-26 20:20:02 UTC
