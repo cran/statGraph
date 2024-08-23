@@ -22,8 +22,9 @@
 #' \item{\code{method:}}{ a string indicating the used method.}
 #' \item{\code{info:}}{ a string showing details about the method.}
 #' \item{\code{data.name:}}{ a string with the data's name(s).}
-#' \item{\code{cluster:}}{ a vector of the same length of \code{x} containing the
-#' clusterization labels.}
+#' \item{\code{cluster:}}{ a vector of the same length of \code{Graphs} containing the clusterization
+#' labels.}
+#' \item{\code{centers:}}{a list containing the centroids of each cluster.}
 #'
 #' @keywords k-means
 #'
@@ -62,7 +63,7 @@ graph.kmeans <- function(Graphs, k, nstart = 2, dist = "JS", ...) {
     if (k > nstart)
         nstart <- k
     label.final <- NULL
-
+    centroid.final <- NULL
     for (ns in 1:nstart) {
         ## random initialization of the clusters
         label <- sample(rep_len(1:k, nGraphs))
@@ -111,6 +112,7 @@ graph.kmeans <- function(Graphs, k, nstart = 2, dist = "JS", ...) {
                 if (sil.new > sil) {
                   sil <- sil.new
                   label.final <- label
+                  centroid.final <- centroid
                 }
             }
             label <- label.new
@@ -119,7 +121,7 @@ graph.kmeans <- function(Graphs, k, nstart = 2, dist = "JS", ...) {
     ###
     method_info <- "K-means for Graphs"
     info <- "Clustering the graphs following a k-means algorithm"
-    output <- list(method = method_info, info = info, data.name = data.name, cluster = label.final,n = nGraphs)
+    output <- list(method = method_info, info = info, data.name = data.name, cluster = label.final,centers = centroid.final)
     class(output) <- "statGraph"
     return(output)
 }

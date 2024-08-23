@@ -24,7 +24,7 @@
 #' \item{\code{method:}}{ a string indicating the used method.}
 #' \item{\code{info:}}{ a string showing details about the method.}
 #' \item{\code{data.name:}}{ a string with the data's name(s).}
-#' \item{\code{cluster:}}{ a vector of the same length of \code{g} containing the clusterization
+#' \item{\code{cluster:}}{ a vector of the same length of \code{Graphs} containing the clusterization
 #' labels.}
 #' \item{\code{parameters:}}{ a vector containing the estimated parameters for the groups.
 #' It has the length equals to \code{k}.}
@@ -143,7 +143,7 @@ graph.cem <- function(Graphs, model, k, max_iter = 10, ...) {
     method_info <- "Graph Clustering Expectation-Maximization "
     info <- ret[[1]]$info  # info of the parameter estimator
     result <- list(cluster = labels, parameters = p)
-    output <- list(method = method_info, info = info, data.name = data.name, cluster = result$cluster, parameters = result$parameters,n = nGraphs)
+    output <- list(method = method_info, info = info, data.name = data.name, cluster = result$cluster, parameters = result$parameters)
     class(output) <- "statGraph"
     return(output)
 }

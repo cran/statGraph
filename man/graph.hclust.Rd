@@ -25,10 +25,13 @@ distances. 'JS' means Jensen-Shannon divergence.}
 \item{...}{Other relevant parameters for \code{\link{graph.spectral.density}}.}
 }
 \value{
-A list containing the following elements:
-\item{\code{hclust}:}{ A class of type 'hclust'.}
-\item{\code{cluster:}}{ A vector of the same length of \code{Graphs} containing the
-clusterization labels.}
+A list with class 'statGraph' containing the following components:
+\item{\code{method:}}{ a string indicating the used method.}
+\item{\code{info:}}{ a string showing details about the method.}
+\item{\code{data.name:}}{ a string with the data's name(s).}
+\item{\code{cluster:}}{ a vector of the same length of \code{Graphs} containing the clusterization
+labels.}
+\item{\code{hclust:}}{ a 'hclust' object.}
 }
 \description{
 Given a list of graphs, \code{graph.hclust} builds a hierarchy of clusters

@@ -118,7 +118,7 @@ graph.model.selection <- function(Graph, models = NULL, parameters = NULL, ...) 
         m <- rownames(results)[m]
     ###
     method_info <- "Graph Model Selection"
-    info <- "Selects the graph model that best approximates the observed graph."
+    info <- "Selects the graph model that best approximates the observed graph"
     output <- list(method = method_info, info = info, data.name = data.name, model = m, estimates = results)
     class(output) <- "statGraph"
     return(output)

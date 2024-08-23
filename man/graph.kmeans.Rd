@@ -27,8 +27,9 @@ A list with class 'statGraph' containing the following components:
 \item{\code{method:}}{ a string indicating the used method.}
 \item{\code{info:}}{ a string showing details about the method.}
 \item{\code{data.name:}}{ a string with the data's name(s).}
-\item{\code{cluster:}}{ a vector of the same length of \code{x} containing the
-clusterization labels.}
+\item{\code{cluster:}}{ a vector of the same length of \code{Graphs} containing the clusterization
+labels.}
+\item{\code{centers:}}{a list containing the centroids of each cluster.}
 }
 \description{
 \code{graph.kmeans} clusters graphs following a k-means algorithm based on the

@@ -28,7 +28,7 @@ A list with class 'statGraph' containing the following components:
 \item{\code{method:}}{ a string indicating the used method.}
 \item{\code{info:}}{ a string showing details about the method.}
 \item{\code{data.name:}}{ a string with the data's name(s).}
-\item{\code{cluster:}}{ a vector of the same length of \code{g} containing the clusterization
+\item{\code{cluster:}}{ a vector of the same length of \code{Graphs} containing the clusterization
 labels.}
 \item{\code{parameters:}}{ a vector containing the estimated parameters for the groups.
 It has the length equals to \code{k}.}
