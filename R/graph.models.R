@@ -1,11 +1,14 @@
 # return the graph model function
 get.graph.model <- function(model, mean_deg = 1) {
-    if (methods::is(model, "function"))
-        return(model) else if (methods::is(model, "character")) {
-        if (model == "BA")
+    if (methods::is(model, "function")) {
+        return(model)
+    } else if (methods::is(model, "character")) {
+        if (model == "BA") {
             return(BAfun(max(mean_deg, 1)))
-        if (model == "WS")
+        }
+        if (model == "WS") {
             return(WSfun(max(ceiling(mean_deg), 1)))
+        }
         return(match.fun(model))
     }
     stop("Graph model should be either an string ('ER','WS','BA', or 'GRG') or a function")
@@ -58,11 +61,9 @@ BAfun <- function(M) {
 # YOu can add new functions to generate graphs HERE
 
 
-####################################################################### Methods to obtain the degree/exact
-####################################################################### spectral density of a graph model#
+####################################################################### Methods to obtain the degree/exact spectral density of a graph model#
 
-# obtain the graph model spectral density model: string ER|WS|BA|GRG or a function obtain the exact spectral
-# density of a graph model ngraphs: number of graphs to generate to obtain the spectral density
+# obtain the graph model spectral density model: string ER|WS|BA|GRG or a function obtain the exact spectral density of a graph model ngraphs: number of graphs to generate to obtain the spectral density
 graph.model.spectral.density <- function(model, n, p, mean_deg = 1, ngraphs = 50, method = "diag", ...) {
     if (methods::is(model, "list")) {
         if (!is.null(model$x) && !is.null(model$y)) {
@@ -71,14 +72,14 @@ graph.model.spectral.density <- function(model, n, p, mean_deg = 1, ngraphs = 50
             return(model)
         }
     }
-    parameters = list(...)
-    parameters$model = model
-    parameters$n = n
-    parameters$p = p
-    parameters$ngraphs = ngraphs
-    parameters$from = parameters$from
-    parameters$to = parameters$to
-    parameters$mean_deg = mean_deg
+    parameters <- list(...)
+    parameters$model <- model
+    parameters$n <- n
+    parameters$p <- p
+    parameters$ngraphs <- ngraphs
+    parameters$from <- parameters$from
+    parameters$to <- parameters$to
+    parameters$mean_deg <- mean_deg
     den_fun <- match.fun(paste0("graph.", method, ".model.spectral.density"))
     return(do.call(den_fun, parameters))
 }
@@ -135,10 +136,15 @@ get.model.interval <- function(n, m, model, parameter, eps, search) {
     if (search == "grid") {
         parameters <- NULL
         if (is.null(parameter)) {
-            if (model == "GRG")
-                parameters <- seq(0, sqrt(2), eps) else if (model == "BA")
-                parameters <- seq(1e-06, 3, eps) else if (model == "KR")
-                parameters <- as.integer(seq(0, 1, eps) * n) else parameters <- seq(0, 1, eps)
+            if (model == "GRG") {
+                parameters <- seq(0, sqrt(2), eps)
+            } else if (model == "BA") {
+                parameters <- seq(1e-06, 3, eps)
+            } else if (model == "KR") {
+                parameters <- as.integer(seq(0, 1, eps) * n)
+            } else {
+                parameters <- seq(0, 1, eps)
+            }
             return(parameters)
         } else {
             if (methods::is(parameter, "list")) {
@@ -154,23 +160,26 @@ get.model.interval <- function(n, m, model, parameter, eps, search) {
             return(intervals)
         if (methods::is(model, "character")) {
             if (model == "ER") {
-                p = 2 * (m/(n * (n - 1)))
-                intervals = list(list(lo = p, hi = p))
+                p <- 2 * (m/(n * (n - 1)))
+                intervals <- list(list(lo = p, hi = p))
             } else if (model == "KR") {
-                p = (2 * m)/n
-                intervals = list(list(lo = p, hi = p))
+                p <- (2 * m)/n
+                intervals <- list(list(lo = p, hi = p))
             } else {
-                get.mean.spectral.density
-                # the search intervals were found to be the best after extensive experiments to make it work
-                # when ternary search is used to minimize KL divergence.  Nonetheless, this intervals do not
-                # affect the estimated parameters for other 'distance' measures
-                if (model == "WS")
-                  intervals = list(list(lo = 0, hi = 0.4), list(lo = 0.4, hi = 1)) else if (model == "BA")
-                  intervals = list(list(lo = 1e-06, hi = 1.25), list(lo = 1.25, hi = 2.25), list(lo = 2.25, hi = 3)) else if (model == "GRG")
-                  intervals = list(list(lo = 0, hi = 0.8), list(lo = 0.8, hi = 1.4))
+                # the search intervals were found to be the best after extensive experiments to make it work when ternary search is used to minimize KL divergence.  Nonetheless, this intervals do not affect the estimated
+                # parameters for other 'distance' measures
+                if (model == "WS") {
+                  intervals <- list(list(lo = 0, hi = 0.4), list(lo = 0.4, hi = 1))
+                } else if (model == "BA") {
+                  intervals <- list(list(lo = 1e-06, hi = 1.25), list(lo = 1.25, hi = 2.25), list(lo = 2.25, hi = 3))
+                } else if (model == "GRG") {
+                  intervals <- list(list(lo = 0, hi = 0.8), list(lo = 0.8, hi = 1.4))
+                } else {
+                  stop(paste0("The interval search for the graph model ", model, " is not defined! Set the search interval."))
+                }
             }
+            return(intervals)
         }
-        return(intervals)
     }
     stop(paste0("The ", search, " method does not exists! Use 'grid' or 'ternary' instead."))
 }

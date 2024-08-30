@@ -63,8 +63,9 @@
 #'
 #' @export
 sp.anogva <- function(Graphs, model, maxBoot = 100, ...) {
-    if (!valid.input(Graphs, level = 1))
+    if (!valid.input(Graphs, level = 1)) {
         stop("The input should be a list of igraph objects!")
+    }
     data.name <- deparse(substitute(Graphs))
     # compute and save the spectral density of the graphs
     Graphs <- set.list.spectral.density(Graphs, ...)
@@ -74,9 +75,8 @@ sp.anogva <- function(Graphs, model, maxBoot = 100, ...) {
     for (l in 1:nGraphs) {
         p.hat[[l]] <- graph.param.estimator(Graph = Graphs[[l]], model = model, ...)$param
     }
-    # mean_deg = Reduce(f = '+', Map(function (G) { ( igraph::ecount(G)/igraph::vcount(G)) },Graphs))/nGraphs
-    # # error obtain the mean degree of all graphs
-    mean_deg = Map(function(G) {
+    # mean_deg = Reduce(f = '+', Map(function (G) { ( igraph::ecount(G)/igraph::vcount(G)) },Graphs))/nGraphs # error obtain the mean degree of all graphs
+    mean_deg <- Map(function(G) {
         as.integer(ceiling(igraph::ecount(G)/igraph::vcount(G)))
     }, Graphs)
     # recover the generator functions mantaining the average degree if necessary
@@ -112,9 +112,8 @@ sp.anogva <- function(Graphs, model, maxBoot = 100, ...) {
     names(F_) <- "F.value"
     estimate <- unlist(p.hat)
     names(estimate) <- paste("parameter", 1:length(estimate), sep = "")
-    method <- paste0("Semi-parametric Analysis Of Graph Variability with\n       simulated p-value (based on ",
-        maxBoot, " replicates)")
-    rval <- list(statistic = F_, p.value = p, method = method, data.name = data.name, estimate = estimate,n = nGraphs)
+    method <- paste0("Semi-parametric Analysis Of Graph Variability with\n       simulated p-value (based on ", maxBoot, " replicates)")
+    rval <- list(statistic = F_, p.value = p, method = method, data.name = data.name, estimate = estimate, n = nGraphs)
     class(rval) <- "htest"
     return(rval)
 }

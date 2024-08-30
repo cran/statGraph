@@ -55,8 +55,9 @@
 #'  }
 #' @export
 graph.cem <- function(Graphs, model, k, max_iter = 10, ...) {
-    if (!valid.input(Graphs, level = 1))
+    if (!valid.input(Graphs, level = 1)) {
         stop("The input should be a list of igraph objects!")
+    }
     data.name <- deparse(substitute(Graphs))
     ## Pre-processing of the graph spectra
     Graphs <- set.list.spectral.density(Graphs, ...)
@@ -89,8 +90,9 @@ graph.cem <- function(Graphs, model, k, max_iter = 10, ...) {
     for (i in 1:k) {
         p[i] <- quantile(p_uniq, i/(k + 1))
         # the KR parameter needs to be even
-        if (model == "KR")
+        if (model == "KR") {
             p[i] <- round(p[i])
+        }
     }
 
     converged <- 0
@@ -116,22 +118,24 @@ graph.cem <- function(Graphs, model, k, max_iter = 10, ...) {
         }
         # Check if there is an empty group
         for (i in 1:k) {
-            if (length(which(labels == i)) == 0)
+            if (length(which(labels == i)) == 0) {
                 labels[which(tau[i, ] == max(tau[i, ]))] <- i
+            }
         }
 
         # Estimates the value of p for the models to maximize O tae
         for (i in 1:k) {
             p[i] <- sum(p_graph[which(labels == i)])/length(which(labels == i))
-            if (model == "KR")
+            if (model == "KR") {
                 p[i] <- round(p[i])
+            }
         }
 
         prevlik <- lik
         lik <- sum(tau * kl)
         count <- count + 1
         if (count > max_iter) {
-            converged = TRUE
+            converged <- TRUE
         }
 
         if ((prevlik != 0 && prevlik/lik > 0.99 && prevlik/lik < 1.01)) {

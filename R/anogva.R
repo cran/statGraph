@@ -62,8 +62,9 @@
 #'
 #' @export
 anogva <- function(Graphs, labels, maxBoot = 1000, dist = "KL", ...) {
-    if (!valid.input(Graphs, level = 1))
+    if (!valid.input(Graphs, level = 1)) {
         stop("The input should be a list of igraph objects!")
+    }
     data.name <- deparse(substitute(Graphs))
     # compute the spectral densities of the graphs and store in the density attribute
     Graphs <- set.list.spectral.density(Graphs, ...)

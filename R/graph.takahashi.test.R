@@ -65,8 +65,9 @@
 #' @import methods
 #' @export
 graph.takahashi.test <- function(Graphs1, Graphs2, maxBoot = 1000, dist = "JS", ...) {
-    if (!valid.input(Graphs1, level = 1) || !valid.input(Graphs2, level = 1))
+    if (!valid.input(Graphs1, level = 1) || !valid.input(Graphs2, level = 1)) {
         stop("The inputs should be a list of graphs")
+    }
     data.name <- paste(deparse(substitute(Graphs1)), "and", deparse(substitute(Graphs2)))
 
     # obtain support for the spectral densities
@@ -99,8 +100,7 @@ graph.takahashi.test <- function(Graphs1, Graphs2, maxBoot = 1000, dist = "JS", 
     }
     pvalue <- (sum(results >= result))/(maxBoot + 1)
     ###
-    method_info <- paste0("Jensen-Shannon Divergence Between Graphs with\n       simulated p-value (based on ",
-        maxBoot, " replicates)")
+    method_info <- paste0("Jensen-Shannon Divergence Between Graphs with\n       simulated p-value (based on ", maxBoot, " replicates)")
     statistic <- result
     names(statistic) <- dist
     rval <- list(statistic = statistic, p.value = pvalue, method = method_info, data.name = data.name)

@@ -53,8 +53,9 @@
 #' @export
 #'
 graph.cor.test <- function(Graphs1, Graphs2) {
-    if (!valid.input(Graphs1, level = 1) || !valid.input(Graphs2, level = 1))
+    if (!valid.input(Graphs1, level = 1) || !valid.input(Graphs2, level = 1)) {
         stop("The input should be a list of igraph objects!")
+    }
 
     data.name <- paste(deparse(substitute(Graphs1)), "and", deparse(substitute(Graphs2)))
 
@@ -75,5 +76,4 @@ graph.cor.test <- function(Graphs1, Graphs2) {
     rval <- list(statistic = statistic, p.value = res$p.value, method = method, data.name = data.name, estimate = estimate)
     class(rval) <- "htest"
     return(rval)
-    # return(cor.test(G1.radius, G2.radius, method='spearman'))
 }

@@ -78,33 +78,31 @@ graph.spectral.density <- function(Graph, method = "diag", ...) {
     if (is.null(Graph$density)) {
         density_parameters <- get.density.parameters(method = method, ...)
         if (method == "diag") {
-            den_fun <- graph.diag.spectral.density(Graph = Graph, from = density_parameters$from, to = density_parameters$to,
-                bandwidth = density_parameters$bandwidth, npoints = density_parameters$npoints)
+            den_fun <- graph.diag.spectral.density(Graph = Graph, from = density_parameters$from, to = density_parameters$to, bandwidth = density_parameters$bandwidth, npoints = density_parameters$npoints)
         } else if (method == "fast") {
-            den_fun <- graph.fast.spectral.density(Graph = Graph, from = density_parameters$from, to = density_parameters$to,
-                npoints = density_parameters$npoints, numCores = density_parameters$numCores)
+            den_fun <- graph.fast.spectral.density(Graph = Graph, from = density_parameters$from, to = density_parameters$to, npoints = density_parameters$npoints, numCores = density_parameters$numCores)
         } else {
             stop(paste0(method, " is not a valid method, it only can only be 'diag' or 'fast'."))
         }
     } else {
         den_fun <- Graph$density
     }
-    # new('statGraph',den_fun)
     return(den_fun)
 }
 
 
-# Returns the degree-based spectral density in the interval <\code{from},\code{to}> by using npoints
-# discretization points.
+# Returns the degree-based spectral density in the interval <\code{from},\code{to}> by using npoints discretization points.
 graph.fast.spectral.density <- function(Graph, from = NULL, to = NULL, npoints = 1024, numCores = 1) {
     data.name <- deparse(substitute(Graph))
     `%dopar%` <- foreach::`%dopar%`
     # Number of vertices
     n <- igraph::vcount(Graph)
-    if (is.null(from))
+    if (is.null(from)) {
         from <- get.smallest.eigenvalue(Graphs = Graph)
-    if (is.null(to))
+    }
+    if (is.null(to)) {
         to <- get.largest.eigenvalue(Graphs = Graph)
+    }
 
     # Discretizise interval <\code{from},\code{to}> in npoints
     bw <- (to - from)/npoints
@@ -126,13 +124,12 @@ graph.fast.spectral.density <- function(Graph, from = NULL, to = NULL, npoints =
     q_prob <- q_prob[valid_idx]
     all_k <- all_k[valid_idx]
 
-    # Obtain the eigenvalue density for each discretized points by using numCores cores.
-    # doMC::registerDoMC(numCores)
+    # Obtain the eigenvalue density for each discretized points by using numCores cores.  doMC::registerDoMC(numCores)
     cl <- parallel::makePSOCKcluster(numCores)
     doParallel::registerDoParallel(cl)
     i <- NULL
     y <- foreach::foreach(i = 1:length(x), .combine = c, .export = c("fast.eigenvalue.probability")) %dopar% {
-        z <- x[i] + 0.01 * (0 + (0 + (0+1i)))
+        z <- x[i] + 0.01 * (0 + (0 + (0 + (0+1i))))
         -Im(fast.eigenvalue.probability(deg_prob, q_prob, all_k, z))
     }
     # close cluster
@@ -154,8 +151,7 @@ graph.diag.spectral.density <- function(Graph, from = NULL, to = NULL, bandwidth
     ###
     method_info <- "Spectral Density of a Graph"
     info <- "Spectral density obtained with the exact method"
-    value <- list(method = method_info, info = info, data.name = data.name, x = den_fun$x, y = den_fun$y, from = den_fun$from,
-        to = den_fun$to)
+    value <- list(method = method_info, info = info, data.name = data.name, x = den_fun$x, y = den_fun$y, from = den_fun$from, to = den_fun$to)
     class(value) <- "statGraph"
     return(value)
 }
@@ -172,7 +168,7 @@ get.density.parameters <- function(method = "diag", ...) {
 
 # Returns the probability of an eigenvalue given the degree and excess degree probability.
 fast.eigenvalue.probability <- function(deg_prob, q_prob, all_k, z, n_iter = 5000) {
-    h_z <- 0 + (0 + (0 + (0+0i)))
+    h_z <- 0 + (0+0i)
     eps <- 1e-07
     all_k_mo <- all_k - 1
     while (n_iter > 0) {
@@ -233,13 +229,7 @@ get.fast.density.parameters <- function(...) {
 }
 
 
-############################################################################################# SPECTRAL
-############################################################################################# DENSITIES
-############################################################################################# UTILITY
-############################################################################################# FUNCTIONS GIVEN
-############################################################################################# A LIST OF
-############################################################################################# GRAPHS
-############################################################################################# ############
+############################################################################################# SPECTRAL DENSITIES UTILITY FUNCTIONS GIVEN A LIST OF GRAPHS ############
 
 # given a list of graphs that contain their spectral density stored in the 'density' attribute.
 get.mean.spectral.density <- function(Graphs) {
@@ -256,8 +246,7 @@ get.mean.spectral.density <- function(Graphs) {
 }
 
 
-# obtains the spectral densities of the graphs in a list.  each spectral density is stored in the 'density'
-# attribute of each graph parameters relevant to the spectral density can be passed
+# obtains the spectral densities of the graphs in a list.  each spectral density is stored in the 'density' attribute of each graph parameters relevant to the spectral density can be passed
 set.list.spectral.density <- function(Graphs, ...) {
     # recover spectral density parameters
     spectral_density_param <- list(...)

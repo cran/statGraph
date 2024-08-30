@@ -68,8 +68,9 @@
 #' @importFrom graphics text
 #' @export
 graph.mult.scaling <- function(Graphs, plot = TRUE, type = "n", dist = "JS", main = "", ...) {
-    if (!valid.input(Graphs, level = 1))
+    if (!valid.input(Graphs, level = 1)) {
         stop("The input should be a list of igraph objects!")
+    }
 
     data.name <- deparse(substitute(Graphs))
 

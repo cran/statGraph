@@ -1,7 +1,7 @@
 Package: statGraph
 Type: Package
 Title: Statistical Methods for Graphs
-Version: 1.0.4
+Version: 1.0.5
 Authors@R: c(
     person("Grover E.", "Castro Guzman", email="grover@usp.br", role=c("aut")), 
     person("Diogo R.", "da Costa", email="diogocost2@gmail.com", role=c("aut")),
@@ -22,15 +22,15 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyLoad: yes
 URL: https://www.ime.usp.br/~fujita/software.html
-Date: 2024-08-22
+Date: 2024-08-30
 NeedsCompilation: no
 RoxygenNote: 7.3.2
 Repository: CRAN
-Packaged: 2024-08-22 21:09:50 UTC; grover
+Packaged: 2024-08-30 13:13:41 UTC; grover
 Author: Grover E. Castro Guzman [aut],
   Diogo R. da Costa [aut],
   Taiane C. Ramos [aut],
   Suzana S. Santos [aut],
   Eduardo S. Lira [aut],
   Andre Fujita [aut, cre]
-Date/Publication: 2024-08-23 04:30:02 UTC
+Date/Publication: 2024-08-30 13:50:02 UTC

@@ -1,5 +1,4 @@
-# obtain the eigenvalues of the graph, if Graph contains eigenvalues as attribute then such values are
-# returned
+# obtain the eigenvalues of the graph, if Graph contains eigenvalues as attribute then such values are returned
 graph.eigenvalues <- function(Graph) {
     if (!is.null(Graph$density)) {
         return(NULL)
@@ -15,17 +14,19 @@ graph.eigenvalues <- function(Graph) {
     }
 }
 
-# checks if the variable is a graph, a list of graphs, or a list of lists of graphs level = 0: checks if
-# input is a graph level = 1: checks if the input is a list of graphs level = 2: checks if the input is a
-# list of list of graphs, and so on
+# checks if the variable is a graph, a list of graphs, or a list of lists of graphs level = 0: checks if input is a graph level = 1: checks if the input is a list of graphs level = 2: checks if the input is a list of list of
+# graphs, and so on
 valid.input <- function(Graph, level = 0) {
     if (level == 0) {
         return(methods::is(Graph, "igraph"))
     } else {
-        if (methods::is(Graph, "list"))
+        if (methods::is(Graph, "list")) {
             return(Reduce(f = "&", Map(f = function(x) {
                 valid.input(x, level - 1)
-            }, Graph))) else return(FALSE)
+            }, Graph)))
+        } else {
+            return(FALSE)
+        }
     }
 }
 
@@ -63,8 +64,7 @@ gaussianDensity <- function(x, from = NULL, to = NULL, bandwidth = "Silverman", 
 }
 
 
-# Given a partition x[1]...x[n] and y[i] = f(x[i]), returns the trapezoid sum approximation for
-# int_{x[1]}^{x[n]}{f(x)dx}
+# Given a partition x[1]...x[n] and y[i] = f(x[i]), returns the trapezoid sum approximation for int_{x[1]}^{x[n]}{f(x)dx}
 trapezoidSum <- function(x, y) {
     n <- length(x)
     delta <- (x[2] - x[1])

@@ -86,8 +86,9 @@
 #' @export
 graph.model.selection <- function(Graph, models = NULL, parameters = NULL, ...) {
 
-    if (!valid.input(Graph))
+    if (!valid.input(Graph)) {
         stop("The input should be an igraph object!")
+    }
 
     data.name <- deparse(substitute(Graph))
     if (is.null(models)) {
@@ -107,15 +108,17 @@ graph.model.selection <- function(Graph, models = NULL, parameters = NULL, ...) 
     colnames(results) <- c("param", "GIC")
     for (i in 1:length(models)) {
         param <- NULL
-        if (!is.null(parameters))
+        if (!is.null(parameters)) {
             param <- parameters[[i]]
+        }
         r <- graph.param.estimator(Graph = Graph, model = models[[i]], interval = param, ...)
         results[i, "param"] <- r$param
         results[i, "GIC"] <- r$dist
     }
     m <- which(results[, "GIC"] == min(results[, "GIC"]))
-    if (!is.null(rownames(results)))
+    if (!is.null(rownames(results))) {
         m <- rownames(results)[m]
+    }
     ###
     method_info <- "Graph Model Selection"
     info <- "Selects the graph model that best approximates the observed graph"

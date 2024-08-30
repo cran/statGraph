@@ -31,14 +31,16 @@
 #'
 #' @export
 graph.entropy <- function(Graph, ...) {
-    if (!valid.input(Graph))
+    if (!valid.input(Graph)) {
         stop("The input should be an igraph object!")
+    }
     data.name <- deparse(substitute(Graph))
     # compute the entropy
     f <- graph.spectral.density(Graph, ...)
 
-    if (sum(is.na(f)) > 0)
+    if (sum(is.na(f)) > 0) {
         return(NA)
+    }
     y <- f$y
     valid_idx <- which(y != 0)
     y[valid_idx] <- y[valid_idx] * log(y[valid_idx])

@@ -50,8 +50,9 @@
 #'
 #' @export
 graph.kmeans <- function(Graphs, k, nstart = 2, dist = "JS", ...) {
-    if (!valid.input(Graphs, level = 1))
+    if (!valid.input(Graphs, level = 1)) {
         stop("The input should be a list of igraph objects!")
+    }
 
     data.name <- deparse(substitute(Graphs))
 
@@ -60,8 +61,9 @@ graph.kmeans <- function(Graphs, k, nstart = 2, dist = "JS", ...) {
 
     sil <- -1
 
-    if (k > nstart)
+    if (k > nstart) {
         nstart <- k
+    }
     label.final <- NULL
     centroid.final <- NULL
     for (ns in 1:nstart) {
@@ -98,8 +100,7 @@ graph.kmeans <- function(Graphs, k, nstart = 2, dist = "JS", ...) {
                     size.cluster[j] <- length(which(label.new == j))
                   }
                   largest.cluster <- which(size.cluster == max(size.cluster))
-                  item <- which(distance_mat[, largest.cluster] == max(distance_mat[which(label.new == largest.cluster),
-                    largest.cluster]))
+                  item <- which(distance_mat[, largest.cluster] == max(distance_mat[which(label.new == largest.cluster), largest.cluster]))
                   label.new[item] <- i
                   i <- 1
                 }
@@ -121,7 +122,7 @@ graph.kmeans <- function(Graphs, k, nstart = 2, dist = "JS", ...) {
     ###
     method_info <- "K-means for Graphs"
     info <- "Clustering the graphs following a k-means algorithm"
-    output <- list(method = method_info, info = info, data.name = data.name, cluster = label.final,centers = centroid.final)
+    output <- list(method = method_info, info = info, data.name = data.name, cluster = label.final, centers = centroid.final)
     class(output) <- "statGraph"
     return(output)
 }

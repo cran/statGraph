@@ -115,15 +115,15 @@ graph.param.estimator <- function(Graph, model, interval = NULL, eps = 0.01, sea
     params <- list(...)
     if (search == "ternary") {
         condition <- FALSE
-        if ((length(params) == 0))
-            condition <- TRUE else if (is.null(params$dist)) {
+        if ((length(params) == 0)) {
+            condition <- TRUE
+        } else if (is.null(params$dist)) {
             condition <- TRUE
         } else if (params$dist == "KL") {
             condition <- TRUE
         }
         if (condition) {
-            warning("Ternary search does not guarantee to obtain the parameter with the smallest 'KL' divergence.",
-                immediate. = TRUE)
+            warning("Ternary search does not guarantee to obtain the parameter with the smallest 'KL' divergence.", immediate. = TRUE)
         }
     }
     #
@@ -133,8 +133,7 @@ graph.param.estimator <- function(Graph, model, interval = NULL, eps = 0.01, sea
     # returns a vector or a list of intervals
     search_interval <- get.model.interval(n = n, m = m, model = model, parameter = interval, eps = eps, search = search)
     # search the parameter that minimizes the norm/divergence
-    search_output <- graph.model.param.search(Graph = Graph, model = model, search_interval = search_interval,
-        eps = eps, ...)
+    search_output <- graph.model.param.search(Graph = Graph, model = model, search_interval = search_interval, eps = eps, ...)
     ###
     method <- "Graph Parameter Estimator"
     info <- Graph$density$info
@@ -174,18 +173,19 @@ graph.model.grid.param.search <- function(Graph, model, search_interval, ...) {
 
 # Ternary search
 graph.model.ternary.param.search <- function(Graph, model, search_interval, eps, ...) {
-    pmin_res = NA
-    min_GIC = Inf
+    pmin_res <- NA
+    min_GIC <- Inf
     for (interval in search_interval) {
-        lo = interval$lo
-        hi = interval$hi
-        curr_GIC = NA
+        lo <- interval$lo
+        hi <- interval$hi
+        curr_GIC <- NA
         while (TRUE) {
             if (abs(lo - hi) < eps || lo > hi) {
                 pmin <- (lo + hi)/2
-                if (model == "KR")
-                  pmin = as.integer(round(pmin))
-                curr_GIC = GIC(Graph = Graph, model = model, p = pmin, ...)$value
+                if (model == "KR") {
+                  pmin <- as.integer(round(pmin))
+                }
+                curr_GIC <- GIC(Graph = Graph, model = model, p = pmin, ...)$value
                 break
             }
 
@@ -193,17 +193,20 @@ graph.model.ternary.param.search <- function(Graph, model, search_interval, eps,
             rightThird <- (lo + 2 * hi)/3
 
             if (model == "KR") {
-                leftThird = as.integer(round(leftThird))
-                rightThird = as.integer(round(rightThird))
+                leftThird <- as.integer(round(leftThird))
+                rightThird <- as.integer(round(rightThird))
             }
             GIC_1 <- GIC(Graph = Graph, model, p = leftThird, ...)$value
             GIC_2 <- GIC(Graph = Graph, model, p = rightThird, ...)$value
-            if (GIC_1 <= GIC_2)
-                hi <- rightThird else lo <- leftThird
+            if (GIC_1 <= GIC_2) {
+                hi <- rightThird
+            } else {
+                lo <- leftThird
+            }
         }
         if (curr_GIC < min_GIC) {
-            pmin_res = pmin
-            min_GIC = curr_GIC
+            pmin_res <- pmin
+            min_GIC <- curr_GIC
         }
     }
     out <- list(param = pmin_res, dist = min_GIC)

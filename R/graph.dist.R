@@ -38,8 +38,9 @@
 #' @import methods
 #' @export
 graph.dist <- function(Graphs, dist = "JS", ...) {
-    if (!valid.input(Graphs, level = 1))
+    if (!valid.input(Graphs, level = 1)) {
         stop("The input should be a list of igraph objects!")
+    }
 
     Graphs <- set.list.spectral.density(Graphs, ...)
 
@@ -57,14 +58,18 @@ graph.dist <- function(Graphs, dist = "JS", ...) {
 
 # distance between two density functions
 distance <- function(f1, f2, dist = "KL") {
-    if (dist == "KL")
+    if (dist == "KL") {
         return(KL(f1, f2))
-    if (dist == "L1")
+    }
+    if (dist == "L1") {
         return(L2(f1, f2))
-    if (dist == "L2")
+    }
+    if (dist == "L2") {
         return(L2(f1, f2))
-    if (dist == "JS")
+    }
+    if (dist == "JS") {
         return(JS(f1, f2))
+    }
     # error if the distance parameter does not exists
     stop(paste0(dist, " distance measure is not valid. Use: KL, JS ,L1, or L2"))
 }
@@ -88,13 +93,13 @@ KL <- function(f1, f2) {
     diff_zero <- (y != 0)
     eq_zero <- (f2$y == 0)
 
-    if (sum(diff_zero & eq_zero) != 0)
+    if (sum(diff_zero & eq_zero) != 0) {
         return(Inf)
+    }
 
     y[diff_zero] <- y[diff_zero] * log(y[diff_zero]/f2$y[diff_zero])
 
-    # y <- f1$y n <- length(y) for (i in 1:n) { if (y[i] != 0 && f2$y[i] == 0){ return (Inf) } if (y[i] != 0)
-    # y[i] <- y[i]*log(y[i]/f2$y[i]) }
+    # y <- f1$y n <- length(y) for (i in 1:n) { if (y[i] != 0 && f2$y[i] == 0){ return (Inf) } if (y[i] != 0) y[i] <- y[i]*log(y[i]/f2$y[i]) }
     return(trapezoidSum(f1$x, y))
 }
 

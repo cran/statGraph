@@ -100,9 +100,9 @@ GIC <- function(Graph, model, p = NULL, dist = "KL", ...) {
     }
     data.name <- deparse(substitute(Graph))
 
-    n = igraph::vcount(Graph)
-    m = igraph::ecount(Graph)
-    avg_deg = as.integer(ceiling(m/n))
+    n <- igraph::vcount(Graph)
+    m <- igraph::ecount(Graph)
+    avg_deg <- as.integer(ceiling(m/n))
 
     graph_den <- Graph$density
     model_den <- NULL
@@ -110,8 +110,7 @@ GIC <- function(Graph, model, p = NULL, dist = "KL", ...) {
         model_den <- graph.model.spectral.density(model = model, n = n, p = p, mean_deg = avg_deg, ...)
         graph_den <- graph.spectral.density(Graph, from = model_den$from, to = model_den$to, ...)
     } else {
-        model_den <- graph.model.spectral.density(model, n = n, p = p, mean_deg = avg_deg, from = graph_den$from,
-            to = graph_den$to, ...)
+        model_den <- graph.model.spectral.density(model, n = n, p = p, mean_deg = avg_deg, from = graph_den$from, to = graph_den$to, ...)
     }
     #
     if (sum(is.na(model_den)) > 0)

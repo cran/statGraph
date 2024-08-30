@@ -66,8 +66,9 @@
 #' @export
 graph.hclust <- function(Graphs, k = NULL, clus_method = "complete", dist = "JS", ...) {
 
-    if (!valid.input(Graphs, level = 1))
+    if (!valid.input(Graphs, level = 1)){
         stop("The input should be a list of igraph objects!")
+    }
     data.name <- deparse(substitute(Graphs))
     Graphs <- set.list.spectral.density(Graphs, ...)
 
@@ -77,7 +78,7 @@ graph.hclust <- function(Graphs, k = NULL, clus_method = "complete", dist = "JS"
 
     cluster <- NULL
     if (!is.null(k)) {
-      cluster <- cutree(tmp, k)
+        cluster <- cutree(tmp, k)
     }
     #
     method_info <- "Hierarchical Clustering for Graphs"
