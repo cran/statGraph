@@ -62,7 +62,7 @@ distance <- function(f1, f2, dist = "KL") {
         return(KL(f1, f2))
     }
     if (dist == "L1") {
-        return(L2(f1, f2))
+        return(L1(f1, f2))
     }
     if (dist == "L2") {
         return(L2(f1, f2))
@@ -97,7 +97,7 @@ KL <- function(f1, f2) {
         return(Inf)
     }
 
-    y[diff_zero] <- y[diff_zero] * log(y[diff_zero]/f2$y[diff_zero])
+    y[diff_zero] <- y[diff_zero] * (log(y[diff_zero]) - log(f2$y[diff_zero]))
 
     # y <- f1$y n <- length(y) for (i in 1:n) { if (y[i] != 0 && f2$y[i] == 0){ return (Inf) } if (y[i] != 0) y[i] <- y[i]*log(y[i]/f2$y[i]) }
     return(trapezoidSum(f1$x, y))

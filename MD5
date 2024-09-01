@@ -1,11 +1,11 @@
-34a4bb0426e27f601fe1982b06ed4f96 *DESCRIPTION
+4624df437ae5d329af8274a4ffe7aff6 *DESCRIPTION
 7b2751a429dd2f847c142c9ee09a40c0 *NAMESPACE
 e34b7f92c2c04ecd5a82cf8f30bfc6a9 *R/GIC.R
 8e23b9abffec71ce4e229f7f774f6862 *R/anogva.R
 e1ac445788e37bfd29c63ed4cd738971 *R/graph.acf.R
 880c5cb6a2ff2a40d7daeb8679849449 *R/graph.cem.R
 a3d9ac272c02a3203dd4ceb750a3ab66 *R/graph.cor.test.R
-a3245fd141cd80468dcc118b1588ba66 *R/graph.dist.R
+6f089ac08a7748048365b08a0a5b2246 *R/graph.dist.R
 82b75460bf863c33b42e4356cef1a6a0 *R/graph.entropy.R
 8a4b5aec5debe18287c294aec5147158 *R/graph.hclust.R
 fb259630f877211fbdefac860d702f17 *R/graph.kmeans.R
